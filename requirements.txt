@@ -1,0 +1,6 @@
+flet>=0.21.0
+miniaudio>=1.71.0
+sounddevice>=0.5.0
+numpy>=1.26.0
+windows-curses>=2.2.0; sys_platform == "win32"
+pyperclip>=1.8.0
