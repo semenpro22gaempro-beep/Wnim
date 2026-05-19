@@ -37,7 +37,7 @@ Write-Host "Install directory: $InstallDir" -ForegroundColor Gray
 
 # Copy files
 $ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
-$Files = @("editor.py", "wnim.py")
+$Files = @("editor.py", "wnim.py", "README_WNIM.md")
 foreach ($file in $Files) {
     $src = Join-Path $ScriptDir $file
     if (Test-Path $src) {
@@ -73,7 +73,14 @@ Write-Host "Installation complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Usage:" -ForegroundColor Cyan
 Write-Host "  wnim                    - new file"
-Write-Host "  wnim filename.py        - open file"
+Write-Host "  wnim filename.py        - open Python file"
 Write-Host "  wnim filename.cs        - open C# file"
+Write-Host "  wnim filename.java      - open Java file"
+Write-Host "  wnim filename.html      - open HTML file"
+Write-Host "  wnim filename.css       - open CSS file"
+Write-Host "  wnim filename.rb        - open Ruby file"
+Write-Host "  wnim filename.lua       - open Lua file"
+Write-Host "  wnim filename.ps1       - open PowerShell file"
+Write-Host "  wnim filename.zig       - open Zig file"
 Write-Host ""
 Write-Host "Restart terminal if 'wnim' command is not found." -ForegroundColor Yellow

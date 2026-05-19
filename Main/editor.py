@@ -9,26 +9,27 @@ Requirements (Windows):
 Usage:
     python editor.py [file]
 
-Supported languages: Python, JavaScript, C, C++, C#, Bash
+Supported languages: Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS
 
 Hotkeys (Windows-style):
-    Ctrl+N      — new file
-    Ctrl+O      — open file
-    Ctrl+S      — save
-    Ctrl+W      — save as
-    Ctrl+Q      — quit
-    Ctrl+Z      — undo
-    Ctrl+Y      — redo
-    Ctrl+A      — file stats
-    Ctrl+C      — copy line
-    Ctrl+X      — cut line
-    Ctrl+V      — paste
-    Ctrl+F      — find
-    Ctrl+G      — go to line
-    Home/End    — start/end of line
-    PgUp/PgDn   — page up/down
-    Tab         — indent
-    Shift+Tab   — unindent
+    Ctrl+Space  - autocomplete
+    Ctrl+N      - new file
+    Ctrl+O      - open file
+    Ctrl+S      - save
+    Ctrl+W      - save as
+    Ctrl+Q      - quit
+    Ctrl+Z      - undo
+    Ctrl+Y      - redo
+    Ctrl+A      - file stats
+    Ctrl+C      - copy line
+    Ctrl+X      - cut line
+    Ctrl+V      - paste
+    Ctrl+F      - find
+    Ctrl+G      - go to line
+    Home/End    - start/end of line
+    PgUp/PgDn   - page up/down
+    Tab         - indent
+    Shift+Tab   - unindent
 
 Auto-features:
     - Auto-close brackets: () [] {} "" ''
@@ -250,27 +251,72 @@ class CSharpHighlighter(BaseHighlighter):
 
 class BashHighlighter(BaseHighlighter):
     def __init__(self):
-        keywords = {
-            "if", "then", "else", "elif", "fi", "case", "esac", "for",
-            "while", "until", "do", "done", "in", "function", "return",
-            "break", "continue", "shift", "exit", "export", "local",
-            "readonly", "unset", "declare", "typeset", "source", "alias",
-        }
-        builtins = {
-            "echo", "printf", "read", "cd", "pwd", "ls", "cat", "grep",
-            "sed", "awk", "cut", "sort", "uniq", "head", "tail", "find",
-            "chmod", "chown", "mkdir", "rm", "cp", "mv", "ln", "touch",
-            "test", "[", "[[", "]", "]]", "true", "false", "sleep", "wait",
-            "kill", "trap", "exec", "eval", "command", "builtin", "type",
-            "jobs", "fg", "bg", "disown", "getopts", "set", "shopt",
-        }
-        extra = [
-            ("COMMENT", r"#[^\n]*"),
-            ("VAR", r"\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_]*|\$\d+|\$\@|\$\*"),
-            ("SUBSHELL", r"\$\([^)]*\)"),
-            ("SHEBANG", r"^#!.*$"),
-        ]
+        keywords = {"if", "then", "else", "elif", "fi", "case", "esac", "for", "while", "until", "do", "done", "in", "function", "return", "break", "continue", "shift", "exit", "export", "local", "readonly", "unset", "declare", "source", "alias"}
+        builtins = {"echo", "printf", "read", "cd", "pwd", "ls", "cat", "grep", "sed", "awk", "cut", "sort", "uniq", "head", "tail", "find", "chmod", "chown", "mkdir", "rm", "cp", "mv", "ln", "touch", "test", "true", "false", "sleep", "wait", "kill", "trap", "exec", "eval"}
+        extra = [("COMMENT", r"#[^\n]*"), ("VAR", r"\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_]*|\$\d+"), ("SHEBANG", r"^#!.*$")]
         super().__init__(keywords, builtins, extra)
+
+
+class RubyHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"BEGIN", "END", "alias", "and", "begin", "break", "case", "class", "def", "defined?", "do", "else", "elsif", "end", "ensure", "false", "for", "if", "in", "module", "next", "nil", "not", "or", "redo", "rescue", "retry", "return", "self", "super", "then", "true", "undef", "unless", "until", "when", "while", "yield"}
+        builtins = {"puts", "print", "printf", "warn", "raise", "require", "load", "include", "extend", "attr_reader", "attr_writer", "attr_accessor", "initialize", "new", "class", "module", "def", "super", "yield", "block_given?", "caller", "exit", "abort", "loop", "proc", "lambda", "gem"}
+        extra = [("COMMENT", r"#[^\n]*"), ("SYMBOL", r":[a-zA-Z_]\w*"), ("CONST", r"\b[A-Z][a-zA-Z0-9_]*\b")]
+        super().__init__(keywords, builtins, extra)
+
+
+class LuaHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"and", "break", "do", "else", "elseif", "end", "false", "for", "function", "goto", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"}
+        builtins = {"print", "type", "tonumber", "tostring", "select", "ipairs", "pairs", "next", "pcall", "xpcall", "error", "assert", "load", "rawget", "rawset", "require", "module", "setmetatable", "getmetatable", "collectgarbage", "dofile", "loadfile", "coroutine", "string", "table", "math", "io", "os", "debug"}
+        extra = [("COMMENT", r"--[^\n]*|--\[\[[\s\S]*?\]\]"), ("STRING", r"(?:\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*')")]
+        super().__init__(keywords, builtins, extra)
+
+
+class PowerShellHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"if", "then", "else", "elseif", "switch", "for", "foreach", "while", "do", "until", "break", "continue", "return", "exit", "try", "catch", "finally", "throw", "trap", "param", "begin", "process", "end", "in", "function", "filter", "class", "enum", "workflow", "configuration", "dynamicparam", "data", "var"}
+        builtins = {"Write-Host", "Write-Output", "Write-Verbose", "Write-Warning", "Write-Error", "Get-Command", "Get-Help", "Get-Process", "Get-Service", "Set-Location", "Get-ChildItem", "Copy-Item", "Move-Item", "Remove-Item", "New-Item", "Test-Path", "Select-String", "Select-Object", "Where-Object", "ForEach-Object", "Sort-Object", "Group-Object", "Measure-Object", "Invoke-Expression", "Invoke-Command", "Start-Process", "Stop-Process", "Get-Content", "Set-Content", "Add-Content", "Clear-Content", "Out-File", "Out-Null", "Out-String"}
+        extra = [("COMMENT", r"#[^\n]*"), ("VAR", r"\$[A-Za-z_][A-Za-z0-9_]*"), ("CMDLET", r"\b[A-Z][a-zA-Z]*-[A-Z][a-zA-Z]*\b")]
+        super().__init__(keywords, builtins, extra)
+
+
+class JavaHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while", "var", "true", "false", "null"}
+        builtins = {"System", "Object", "String", "Integer", "Long", "Double", "Float", "Boolean", "Character", "Byte", "Short", "Number", "Class", "Math", "Thread", "Runnable", "Exception", "RuntimeException", "Error", "Throwable", "Cloneable", "Comparable", "StringBuilder", "StringBuffer", "ArrayList", "LinkedList", "HashMap", "HashSet", "TreeMap", "TreeSet", "Collections", "Arrays", "Arrays", "Optional", "Stream", "Files", "Paths", "Path", "File", "InputStream", "OutputStream", "Reader", "Writer", "BufferedReader", "BufferedWriter", "PrintWriter", "Scanner", "Date", "Calendar", "LocalDate", "LocalTime", "LocalDateTime", "Instant", "ZoneId", "Duration", "Period", "UUID", "Random", "BigInteger", "BigDecimal", "Pattern", "Matcher", "URL", "URI", "HttpURLConnection", "HttpClient", "WebSocket", "JSON", "JSONArray", "JSONObject"}
+        extra = [("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"), ("ANNOTATION", r"@[a-zA-Z_]\w*"), ("CLASSNAME", r"\b[A-Z][a-zA-Z0-9_]*\b"), ("FUNCNAME", r"\b[a-zA-Z_]\w*(?=\s*\()")]
+        super().__init__(keywords, builtins, extra)
+
+
+class ZigHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"align", "and", "asm", "async", "await", "break", "catch", "comptime", "const", "continue", "defer", "else", "enum", "errdefer", "error", "export", "extern", "fn", "for", "if", "inline", "noalias", "nosuspend", "opaque", "or", "orelse", "pack", "pub", "resume", "return", "linksection", "struct", "suspend", "switch", "test", "threadlocal", "try", "union", "unreachable", "usingnamespace", "var", "volatile", "while"}
+        builtins = {"i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64", "u128", "f16", "f32", "f64", "f80", "f128", "bool", "void", "noreturn", "type", "anyerror", "anyframe", "isize", "usize", "c_short", "c_int", "c_long", "c_longlong", "c_float", "c_double", "c_void", "std", "print", "debug", "warn", "err", "alloc", "malloc", "free", "memcpy", "memset", "strlen", "printf", "sprintf", "exit", "abort", "panic", "assert", "unreachable"}
+        extra = [("COMMENT", r"//[^\n]*"), ("PREPROC", r"#[ \t]*[a-zA-Z_]\w*"), ("NUMBER", r"\b(?:0[xX][0-9a-fA-F]+|\d+)\b")]
+        super().__init__(keywords, builtins, extra)
+
+
+class AsmHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"mov", "add", "sub", "mul", "div", "imul", "idiv", "and", "or", "xor", "not", "neg", "inc", "dec", "cmp", "test", "jmp", "je", "jne", "jz", "jnz", "jg", "jl", "jge", "jle", "ja", "jb", "jae", "jbe", "call", "ret", "push", "pop", "lea", "nop", "hlt", "int", "cli", "sti", "cbw", "cwd", "cdq", "cqo", "bswap", "xchg", "xlat", "lodsb", "lodsw", "lodsd", "lodsq", "stosb", "stosw", "stosd", "stosq", "movsb", "movsw", "movsd", "movsq", "cmpsb", "cmpsw", "cmpsd", "cmpsq", "scasb", "scasw", "scasd", "scasq", "rep", "repe", "repne", "lock", "in", "out", "cli", "sti", "iret", "iretd", "iretq", "lidt", "sidt", "lgdt", "sgdt", "lldt", "sldt", "ltr", "str", "lar", "lsl", "verr", "verw", "arpl", "clts", "smsw", "lmsw", "invd", "wbinvd", "rdmsr", "wrmsr", "rdtsc", "rdtscp", "rdpmc", "cpuid", "xgetbv", "xsetbv", "vmcall", "vmlaunch", "vmresume", "vmxoff"}
+        builtins = {"eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", "eip", "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "rip", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "al", "ah", "bl", "bh", "cl", "ch", "dl", "dh", "ax", "bx", "cx", "dx", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "ymm0", "ymm1", "ymm2", "ymm3", "ymm4", "ymm5", "ymm6", "ymm7", "cs", "ds", "es", "fs", "gs", "ss", "st0", "st1", "st2", "st3", "st4", "st5", "st6", "st7", "cr0", "cr1", "cr2", "cr3", "cr4", "cr8", "dr0", "dr1", "dr2", "dr3", "dr6", "dr7"}
+        extra = [("COMMENT", r";[^\n]*"), ("LABEL", r"^\s*[a-zA-Z_]\w*:"), ("DIRECTIVE", r"^\s*\.[a-zA-Z_]\w*"), ("REGISTER", r"\b(?:[er][ax-z]{2}|[rx][0-9]{1,2}|[xyz]mm[0-9]+|st[0-7]|[cdesfgs]s|cr[0-8]|dr[0-7])\b")]
+        super().__init__(keywords, builtins, extra)
+
+
+class HTMLHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"html", "head", "body", "div", "span", "p", "a", "img", "ul", "ol", "li", "table", "tr", "td", "th", "thead", "tbody", "tfoot", "form", "input", "button", "select", "option", "textarea", "label", "fieldset", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "br", "hr", "pre", "code", "blockquote", "q", "cite", "abbr", "address", "b", "i", "u", "s", "strong", "em", "mark", "small", "del", "ins", "sub", "sup", "time", "nav", "header", "footer", "main", "section", "article", "aside", "figure", "figcaption", "details", "summary", "dialog", "template", "slot", "script", "style", "link", "meta", "title", "base", "style", "canvas", "svg", "video", "audio", "source", "track", "iframe", "object", "embed", "param", "map", "area", "picture", "wbr", "ruby", "rt", "rp", "bdi", "bdo", "data", "datalist", "optgroup", "output", "progress", "meter", "noscript"}
+        extra = [("COMMENT", r"<!--[\s\S]*?-->"), ("TAG", r"</?[a-zA-Z][a-zA-Z0-9]*"), ("ATTR", r"\s[a-zA-Z][a-zA-Z0-9-]*="), ("ENTITY", r"&[a-zA-Z]+;|&#\d+;")]
+        super().__init__(set(), set(), extra)
+
+
+class CSSHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {"display", "position", "top", "right", "bottom", "left", "z-index", "width", "height", "min-width", "max-width", "min-height", "max-height", "padding", "margin", "border", "border-width", "border-style", "border-color", "border-radius", "background", "background-color", "background-image", "background-position", "background-size", "color", "font", "font-family", "font-size", "font-weight", "font-style", "line-height", "text-align", "text-decoration", "text-transform", "letter-spacing", "word-spacing", "white-space", "visibility", "opacity", "overflow", "float", "clear", "flex", "flex-direction", "flex-wrap", "justify-content", "align-items", "align-content", "grid", "grid-template-columns", "grid-template-rows", "gap", "transform", "transition", "animation", "keyframes", "box-shadow", "text-shadow", "cursor", "user-select", "pointer-events", "resize", "scrollbar-width", "scrollbar-color"}
+        extra = [("COMMENT", r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"), ("SELECTOR", r"[.#]?[a-zA-Z_][a-zA-Z0-9_-]*(?:\s*,\s*[.#]?[a-zA-Z_][a-zA-Z0-9_-]*)*\s*\{"), ("PROPERTY", r"[a-z-]+\s*:"), ("VALUE", r":\s*[^;]+;")]
+        super().__init__(set(), set(), extra)
 
 
 def get_highlighter(filename):
@@ -289,6 +335,22 @@ def get_highlighter(filename):
         return CSharpHighlighter()
     elif ext in (".sh", ".bash", ".zsh"):
         return BashHighlighter()
+    elif ext in (".rb", ".erb"):
+        return RubyHighlighter()
+    elif ext == ".lua":
+        return LuaHighlighter()
+    elif ext in (".ps1", ".psm1", ".psd1"):
+        return PowerShellHighlighter()
+    elif ext == ".java":
+        return JavaHighlighter()
+    elif ext == ".zig":
+        return ZigHighlighter()
+    elif ext in (".asm", ".s", ".S"):
+        return AsmHighlighter()
+    elif ext in (".html", ".htm", ".xhtml"):
+        return HTMLHighlighter()
+    elif ext == ".css":
+        return CSSHighlighter()
     return None
 
 
@@ -307,9 +369,12 @@ class Editor:
         self.dirty = False
         self.message = ""
         self._quit_confirm = False
-        # выделение (для Ctrl+A)
         self.sel_start = None
         self.sel_end = None
+        # autocomplete
+        self.completions = []
+        self.completion_idx = 0
+        self.completion_visible = False
 
         if filename and os.path.exists(filename):
             try:
@@ -606,6 +671,92 @@ class Editor:
         self.dirty = True
         self.message = "Pasted"
 
+    # ─── Autocomplete ─────────────────────────────────────
+
+    def _get_word_prefix(self):
+        line = self.lines[self.cursor_y]
+        x = self.cursor_x
+        start = x
+        while start > 0 and line[start - 1].isalnum() or (start > 0 and line[start - 1] == '_'):
+            start -= 1
+        return line[start:x], start
+
+    def _collect_words(self):
+        words = set()
+        for line in self.lines:
+            for m in re.finditer(r"[a-zA-Z_]\w*", line):
+                words.add(m.group())
+        return sorted(words)
+
+    def show_completions(self, stdscr):
+        prefix, start_x = self._get_word_prefix()
+        all_words = self._collect_words()
+        if prefix:
+            matches = [w for w in all_words if w.startswith(prefix) and w != prefix]
+        else:
+            matches = []
+        if not matches:
+            self.message = "No completions"
+            self.completion_visible = False
+            return
+        self.completions = matches
+        self.completion_idx = 0
+        self.completion_visible = True
+        max_y, max_x = stdscr.getmaxyx()
+        line_num_width = 6
+        gutter = 1
+        code_x = line_num_width + gutter
+        # draw popup
+        popup_y = self.cursor_y - self.scroll_y + 1
+        popup_x = code_x + (self.cursor_x - self.scroll_x)
+        popup_h = min(len(matches), 8)
+        popup_w = min(max(len(w) for w in matches) + 2, max_x - popup_x)
+        if popup_y + popup_h >= max_y - 1:
+            popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
+        for i, word in enumerate(matches[:popup_h]):
+            attr = curses.A_REVERSE if i == 0 else 0
+            try:
+                stdscr.addstr(popup_y + i, popup_x, word[:popup_w].ljust(popup_w), attr)
+            except curses.error:
+                pass
+        stdscr.refresh()
+
+    def cycle_completion(self, stdscr, direction=1):
+        if not self.completion_visible or not self.completions:
+            return
+        self.completion_idx = (self.completion_idx + direction) % len(self.completions)
+        # redraw
+        self.draw(stdscr)
+        max_y, max_x = stdscr.getmaxyx()
+        line_num_width = 6
+        gutter = 1
+        code_x = line_num_width + gutter
+        popup_y = self.cursor_y - self.scroll_y + 1
+        popup_x = code_x + (self.cursor_x - self.scroll_x)
+        popup_h = min(len(self.completions), 8)
+        popup_w = min(max(len(w) for w in self.completions) + 2, max_x - popup_x)
+        if popup_y + popup_h >= max_y - 1:
+            popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
+        for i, word in enumerate(self.completions[:popup_h]):
+            attr = curses.A_REVERSE if i == self.completion_idx else 0
+            try:
+                stdscr.addstr(popup_y + i, popup_x, word[:popup_w].ljust(popup_w), attr)
+            except curses.error:
+                pass
+        stdscr.refresh()
+
+    def accept_completion(self):
+        if not self.completion_visible or not self.completions:
+            return
+        prefix, start_x = self._get_word_prefix()
+        chosen = self.completions[self.completion_idx]
+        line = self.lines[self.cursor_y]
+        self.lines[self.cursor_y] = line[:start_x] + chosen + line[self.cursor_x:]
+        self.cursor_x = start_x + len(chosen)
+        self.dirty = True
+        self.completion_visible = False
+        self.completions = []
+
     # ─── Search / Goto ────────────────────────────────────
 
     def prompt(self, stdscr, prompt_text):
@@ -685,6 +836,19 @@ class Editor:
             "PAREN": 13,
             "VAR": 14,
             "SUBSHELL": 14,
+            "SYMBOL": 14,
+            "CONST": 7,
+            "ANNOTATION": 11,
+            "CMDLET": 4,
+            "TAG": 3,
+            "ATTR": 5,
+            "ENTITY": 9,
+            "SELECTOR": 6,
+            "PROPERTY": 5,
+            "VALUE": 8,
+            "LABEL": 6,
+            "DIRECTIVE": 11,
+            "REGISTER": 7,
         }
         return curses.color_pair(mapping.get(kind, 0))
 
@@ -841,6 +1005,14 @@ class Editor:
             if code == curses.KEY_RESIZE:
                 continue
 
+            if code == 27:  # Esc
+                self.completion_visible = False
+                continue
+
+            # hide completion on most keys
+            if code not in (0, 259, 258, 260, 261, 338, 339, 262, 360):
+                self.completion_visible = False
+
             # ── Quit ──
             if code == 17:  # Ctrl+Q
                 if self.dirty:
@@ -875,6 +1047,12 @@ class Editor:
                 self.paste()
             elif code == 1:  # Ctrl+A
                 self.message = f"Lines: {len(self.lines)}, Chars: {sum(len(l) for l in self.lines)}"
+            # ── Autocomplete ──
+            elif code == 0:  # Ctrl+Space
+                if self.completion_visible:
+                    self.accept_completion()
+                else:
+                    self.show_completions(stdscr)
             # ── Навигация / Поиск ──
             elif code == 6:  # Ctrl+F
                 self.find(stdscr)
@@ -890,7 +1068,10 @@ class Editor:
             elif code == curses.KEY_DC:
                 self.delete()
             elif code in (10, 13):
-                self.insert_newline()
+                if self.completion_visible:
+                    self.accept_completion()
+                else:
+                    self.insert_newline()
             elif code == curses.KEY_LEFT:
                 if self.cursor_x > 0:
                     self.cursor_x -= 1
@@ -904,11 +1085,15 @@ class Editor:
                     self.cursor_y += 1
                     self.cursor_x = 0
             elif code == curses.KEY_UP:
-                if self.cursor_y > 0:
+                if self.completion_visible:
+                    self.cycle_completion(stdscr, -1)
+                elif self.cursor_y > 0:
                     self.cursor_y -= 1
                     self.cursor_x = min(self.cursor_x, len(self.lines[self.cursor_y]))
             elif code == curses.KEY_DOWN:
-                if self.cursor_y < len(self.lines) - 1:
+                if self.completion_visible:
+                    self.cycle_completion(stdscr, 1)
+                elif self.cursor_y < len(self.lines) - 1:
                     self.cursor_y += 1
                     self.cursor_x = min(self.cursor_x, len(self.lines[self.cursor_y]))
             elif code == curses.KEY_HOME:
