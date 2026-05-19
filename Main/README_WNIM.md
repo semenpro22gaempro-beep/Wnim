@@ -1,0 +1,179 @@
+# WNim — Console Code Editor for Windows
+
+Minimalist console code editor for Windows with syntax highlighting and Windows-style hotkeys.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
+
+## ✨ Features
+
+- **Syntax Highlighting** — Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS
+- **Windows Hotkeys** — Ctrl+C, Ctrl+V, Ctrl+S, Ctrl+Z, Ctrl+Y, etc.
+- **Auto-close Brackets** — `()`, `[]`, `{}`, `""`, `''`
+- **Auto-indent** — After `:`, `{`, `[`
+- **Autocomplete** — Press `Ctrl+Space` to show completions from current file
+- **Undo/Redo** — Full undo/redo support
+- **Search & Goto** — Find text and jump to line
+- **System Clipboard** — Copy/paste with pyperclip
+
+## 📦 Installation
+
+### Option 1: Automatic Installer (Recommended)
+
+1. Clone or download this repository:
+```powershell
+git clone <repository-url>
+cd <repository-folder>
+```
+
+2. Run the installer:
+```powershell
+.\install.ps1
+```
+
+3. Restart your terminal and run:
+```powershell
+wnim filename.py
+```
+
+### Option 2: Manual Installation
+
+1. Install Python 3.8+ from [python.org](https://python.org)
+
+2. Install dependencies:
+```powershell
+pip install windows-curses pyperclip
+```
+
+3. Run the editor:
+```powershell
+python editor.py filename.py
+```
+
+## ⌨️ Hotkeys
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+Space` | Autocomplete |
+| `Ctrl+N` | New file |
+| `Ctrl+O` | Open file |
+| `Ctrl+S` | Save |
+| `Ctrl+W` | Save as |
+| `Ctrl+Q` | Quit |
+| `Ctrl+Z` | Undo |
+| `Ctrl+Y` | Redo |
+| `Ctrl+A` | File stats |
+| `Ctrl+C` | Copy line |
+| `Ctrl+X` | Cut line |
+| `Ctrl+V` | Paste |
+| `Ctrl+F` | Find |
+| `Ctrl+G` | Go to line |
+| `Home/End` | Start/End of line |
+| `PgUp/PgDn` | Page up/down |
+| `Tab` | Indent |
+| `Shift+Tab` | Unindent |
+
+## 🎨 Supported Languages
+
+| Language | Extensions |
+|----------|------------|
+| Python | `.py` |
+| JavaScript/TypeScript | `.js`, `.jsx`, `.ts`, `.tsx` |
+| C | `.c`, `.h` |
+| C++ | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hh` |
+| C# | `.cs` |
+| Bash | `.sh`, `.bash`, `.zsh` |
+| Ruby | `.rb`, `.erb` |
+| Lua | `.lua` |
+| PowerShell | `.ps1`, `.psm1`, `.psd1` |
+| Java | `.java` |
+| Zig | `.zig` |
+| Assembly | `.asm`, `.s`, `.S` |
+| HTML | `.html`, `.htm`, `.xhtml` |
+| CSS | `.css` |
+
+## 🚀 Usage Examples
+
+```powershell
+# Open existing file
+wnim script.py
+
+# Create new file
+wnim
+
+# Open C# file
+wnim Program.cs
+
+# Open Java file
+wnim Main.java
+
+# Open HTML file
+wnim index.html
+
+# Open Zig file
+wnim main.zig
+```
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+wnim/
+├── editor.py          # Main editor code
+├── wnim.py            # Command-line entry point
+├── install.ps1        # Windows installer script
+└── README_WNIM.md     # This file
+```
+
+### Modify and Test
+
+1. Edit `editor.py`
+2. Test changes:
+```powershell
+python editor.py test.py
+```
+
+3. Reinstall to update:
+```powershell
+.\install.ps1
+```
+
+## 📋 Requirements
+
+- **Windows 10/11**
+- **Python 3.8+**
+- **windows-curses** (auto-installed)
+- **pyperclip** (auto-installed, optional for clipboard)
+
+## 🐛 Troubleshooting
+
+### "ModuleNotFoundError: No module named '_curses'"
+```powershell
+pip install windows-curses
+```
+
+### "wnim: command not found"
+- Restart your terminal after installation
+- Or add to PATH manually: `%LOCALAPPDATA%\Microsoft\WindowsApps`
+
+### Clipboard not working
+```powershell
+pip install --upgrade pyperclip
+```
+
+## 📄 License
+
+MIT License — feel free to use and modify.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📧 Support
+
+Open an issue on GitHub for bugs or feature requests.
