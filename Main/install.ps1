@@ -50,21 +50,15 @@ foreach ($file in $Files) {
 }
 
 # Create wnim.bat
-$BatContent = @"
-@echo off
-python "$InstallDir\wnim.py" %*
-"@
+$BatContent = "@echo off`npython `"$InstallDir\wnim.py`" %*"
 $BatPath = "$BinDir\wnim.bat"
-Set-Content -Path $BatPath -Value $BatContent -Encoding ASCII
+[IO.File]::WriteAllText($BatPath, $BatContent, [Text.Encoding]::ASCII)
 Write-Host "  Created: $BatPath" -ForegroundColor Gray
 
 # Create wnim.ps1
-$PsContent = @"
-param([Parameter(ValueFromRemainingArguments=`$true)] `$Args)
-& python "$InstallDir\wnim.py" @Args
-"@
+$PsContent = "param(`$args)`n& python `"$InstallDir\wnim.py`" `$args"
 $PsPath = "$BinDir\wnim.ps1"
-Set-Content -Path $PsPath -Value $PsContent -Encoding UTF8
+[IO.File]::WriteAllText($PsPath, $PsContent, [Text.Encoding]::UTF8)
 Write-Host "  Created: $PsPath" -ForegroundColor Gray
 
 # Add to PATH if needed
@@ -78,9 +72,8 @@ Write-Host ""
 Write-Host "Installation complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Usage:" -ForegroundColor Cyan
-Write-Host "  wnim                    — new file"
-Write-Host "  wnim filename.py        — open file"
-Write-Host "  wnim filename.cs        — open C# file"
+Write-Host "  wnim                    - new file"
+Write-Host "  wnim filename.py        - open file"
+Write-Host "  wnim filename.cs        - open C# file"
 Write-Host ""
 Write-Host "Restart terminal if 'wnim' command is not found." -ForegroundColor Yellow
-
