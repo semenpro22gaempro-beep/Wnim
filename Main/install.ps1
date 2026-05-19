@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Установщик WNim — консольного редактора кода для Windows
+# WNim Console Editor Installer for Windows
 
 $ErrorActionPreference = "Stop"
 
@@ -9,77 +9,78 @@ $BinDir = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
 Write-Host "=== WNim Installer ===" -ForegroundColor Cyan
 Write-Host ""
 
-# Проверка Python
+# Check for Python
 $python = Get-Command python -ErrorAction SilentlyContinue
 if (-not $python) {
     $python = Get-Command py -ErrorAction SilentlyContinue
 }
 if (-not $python) {
-    Write-Error "Python не найден. Установите Python 3.8+ с https://python.org"
+    Write-Error "Python not found. Install Python 3.8+ from https://python.org"
     exit 1
 }
 
 $pyVersion = & $python.Source --version 2>&1
-Write-Host "Найден Python: $pyVersion" -ForegroundColor Green
+Write-Host "Found Python: $pyVersion" -ForegroundColor Green
 
-# Проверка/установка зависимостей
-Write-Host "Установка зависимостей (windows-curses, pyperclip)..." -ForegroundColor Yellow
+# Install dependencies
+Write-Host "Installing dependencies (windows-curses, pyperclip)..." -ForegroundColor Yellow
 & $python.Source -m pip install --quiet windows-curses pyperclip
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Не удалось установить зависимости"
+    Write-Error "Failed to install dependencies"
     exit 1
 }
-Write-Host "Зависимости установлены" -ForegroundColor Green
+Write-Host "Dependencies installed" -ForegroundColor Green
 
-# Создание директорий
+# Create directories
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-Write-Host "Директория установки: $InstallDir" -ForegroundColor Gray
+Write-Host "Install directory: $InstallDir" -ForegroundColor Gray
 
-# Копирование файлов
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Copy files
+$ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
 $Files = @("editor.py", "wnim.py")
 foreach ($file in $Files) {
     $src = Join-Path $ScriptDir $file
     if (Test-Path $src) {
         Copy-Item -Path $src -Destination $InstallDir -Force
-        Write-Host "  Скопирован: $file" -ForegroundColor Gray
+        Write-Host "  Copied: $file" -ForegroundColor Gray
     } else {
-        Write-Error "Файл не найден: $file (запустите установщик из папки с исходниками)"
+        Write-Error "File not found: $file (run installer from source folder)"
         exit 1
     }
 }
 
-# Создание wnim.bat
+# Create wnim.bat
 $BatContent = @"
 @echo off
 python "$InstallDir\wnim.py" %*
 "@
 $BatPath = "$BinDir\wnim.bat"
 Set-Content -Path $BatPath -Value $BatContent -Encoding ASCII
-Write-Host "  Создан: $BatPath" -ForegroundColor Gray
+Write-Host "  Created: $BatPath" -ForegroundColor Gray
 
-# Создание wnim.ps1 (для PowerShell)
+# Create wnim.ps1
 $PsContent = @"
 param([Parameter(ValueFromRemainingArguments=`$true)] `$Args)
 & python "$InstallDir\wnim.py" @Args
 "@
 $PsPath = "$BinDir\wnim.ps1"
 Set-Content -Path $PsPath -Value $PsContent -Encoding UTF8
-Write-Host "  Создан: $PsPath" -ForegroundColor Gray
+Write-Host "  Created: $PsPath" -ForegroundColor Gray
 
-# Добавление в PATH (если нужно)
+# Add to PATH if needed
 $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($UserPath -notlike "*$BinDir*") {
     [Environment]::SetEnvironmentVariable("Path", "$UserPath;$BinDir", "User")
-    Write-Host "  Папка $BinDir добавлена в PATH" -ForegroundColor Gray
+    Write-Host "  Added $BinDir to PATH" -ForegroundColor Gray
 }
 
 Write-Host ""
-Write-Host "Установка завершена!" -ForegroundColor Green
+Write-Host "Installation complete!" -ForegroundColor Green
 Write-Host ""
-Write-Host "Запуск:" -ForegroundColor Cyan
-Write-Host "  wnim                    — новый файл"
-Write-Host "  wnim filename.py        — открыть файл"
-Write-Host "  wnim filename.cs        — открыть C# файл"
+Write-Host "Usage:" -ForegroundColor Cyan
+Write-Host "  wnim                    — new file"
+Write-Host "  wnim filename.py        — open file"
+Write-Host "  wnim filename.cs        — open C# file"
 Write-Host ""
-Write-Host "Перезапустите PowerShell/Terminal, если команда 'wnim' не найдена." -ForegroundColor Yellow
+Write-Host "Restart terminal if 'wnim' command is not found." -ForegroundColor Yellow
+
