@@ -1,3 +1,4 @@
+
 # Wnim - vim for windows
 Wnim is a lightweight command-line text editor. It combines the minimalism of the classic Vim editor with the familiar ergonomics of the Windows operating system. The project is designed for users who value the speed of working in the terminal but don't want to spend time memorizing complex Vim key combinations.
 - Defoult windows hotkeys
@@ -111,6 +112,9 @@ python editor.py test.py
 ```powershell
 .\install.ps1
 ```
+## Sreenshots
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/00eba18e-51cd-4ca9-b9b3-24c427502100" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/55f67aa8-6182-45bb-806f-eda3da966044" />
 
 ##  Requirements
 
