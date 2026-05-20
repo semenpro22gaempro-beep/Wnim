@@ -1,4 +1,4 @@
-<img width="3840" height="3840" alt="1000022824 (1)" src="https://github.com/user-attachments/assets/8fc765b0-dd93-4af3-8fea-8d3fb321b93c" />
+<img width="500" height="500" alt="1000022824 (1)" src="https://github.com/user-attachments/assets/8fc765b0-dd93-4af3-8fea-8d3fb321b93c" />
 
 # WNim — Console Code Editor for Windows
 
@@ -10,14 +10,14 @@ Minimalist console code editor for Windows with syntax highlighting and Windows-
 
 
 
-## 📦 Installation
+##  Installation
 
 ### Option 1: Automatic Installer (Recommended)
 
 1. Clone or download this repository:
 ```powershell
-git clone <repository-url>
-cd <repository-folder>
+git clone git@github.com:semenpro22gaempro-beep/Wnim.git
+cd Wnim
 ```
 
 2. Run the installer:
