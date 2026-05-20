@@ -2,7 +2,10 @@
 
 # WNim — Console Code Editor for Windows
 
-Minimalist console code editor for Windows with syntax highlighting and Windows-style hotkeys.
+Wnim is a lightweight command-line text editor. It combines the minimalism of the classic Vim editor with the familiar ergonomics of the Windows operating system. The project is designed for users who value the speed of working in the terminal but don't want to spend time memorizing complex Vim key combinations.
+- Defoult windows hotkeys
+- Simple for noobs
+- Performance for low-end devices
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
