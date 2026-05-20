@@ -1,3 +1,5 @@
+<img width="3840" height="3840" alt="1000022824 (1)" src="https://github.com/user-attachments/assets/8fc765b0-dd93-4af3-8fea-8d3fb321b93c" />
+
 # WNim — Console Code Editor for Windows
 
 Minimalist console code editor for Windows with syntax highlighting and Windows-style hotkeys.
@@ -6,16 +8,7 @@ Minimalist console code editor for Windows with syntax highlighting and Windows-
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 
-## ✨ Features
 
-- **Syntax Highlighting** — Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS
-- **Windows Hotkeys** — Ctrl+C, Ctrl+V, Ctrl+S, Ctrl+Z, Ctrl+Y, etc.
-- **Auto-close Brackets** — `()`, `[]`, `{}`, `""`, `''`
-- **Auto-indent** — After `:`, `{`, `[`
-- **Autocomplete** — Press `Ctrl+Space` to show completions from current file
-- **Undo/Redo** — Full undo/redo support
-- **Search & Goto** — Find text and jump to line
-- **System Clipboard** — Copy/paste with pyperclip
 
 ## 📦 Installation
 
@@ -74,7 +67,7 @@ python editor.py filename.py
 | `Tab` | Indent |
 | `Shift+Tab` | Unindent |
 
-## 🎨 Supported Languages
+##  Supported Languages
 
 | Language | Extensions |
 |----------|------------|
@@ -93,7 +86,7 @@ python editor.py filename.py
 | HTML | `.html`, `.htm`, `.xhtml` |
 | CSS | `.css` |
 
-## 🚀 Usage Examples
+##  Usage Examples
 
 ```powershell
 # Open existing file
@@ -115,7 +108,7 @@ wnim index.html
 wnim main.zig
 ```
 
-## 🛠️ Development
+##  Development
 
 ### Project Structure
 
@@ -140,14 +133,14 @@ python editor.py test.py
 .\install.ps1
 ```
 
-## 📋 Requirements
+##  Requirements
 
 - **Windows 10/11**
 - **Python 3.8+**
 - **windows-curses** (auto-installed)
 - **pyperclip** (auto-installed, optional for clipboard)
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### "ModuleNotFoundError: No module named '_curses'"
 ```powershell
@@ -166,14 +159,3 @@ pip install --upgrade pyperclip
 ## 📄 License
 
 MIT License — feel free to use and modify.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📧 Support
-
-Open an issue on GitHub for bugs or feature requests.
