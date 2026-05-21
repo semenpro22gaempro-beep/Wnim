@@ -120,7 +120,12 @@ wnim/
 ├── editor.py          # Main editor code
 ├── wnim.py            # Command-line entry point
 ├── install.ps1        # Windows installer script
-└── README_WNIM.md     # This file
+└── README_.md     # This file
+wnim/plugins
+├── __init__.py          # Init
+├── plugin_manager.py           # Manager for plugins  
+image/
+|Screenshots of the work
 ```
 
 ### Modify and Test
@@ -135,7 +140,15 @@ python editor.py test.py
 ```powershell
 .\install.ps1
 ```
-
+## Plugins
+Download lua
+```powershell
+pip install lupa
+```
+- Ctrl+L	Add plugin 
+- Ctrl+U	Delate plugin
+- Ctrl+P	List plugins
+- **Add in dirictory "plugins"
 ##  Requirements
 
 - **Windows 10/11**
