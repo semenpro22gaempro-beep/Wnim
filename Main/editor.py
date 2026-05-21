@@ -13,6 +13,9 @@ Supported languages: Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell
 
 Hotkeys (Windows-style):
     Ctrl+Space  - autocomplete
+    Ctrl+L      - load plugin
+    Ctrl+U      - unload plugin
+    Ctrl+P      - list plugins
     Ctrl+N      - new file
     Ctrl+O      - open file
     Ctrl+S      - save
@@ -46,6 +49,14 @@ try:
     HAS_PYPERCLIP = True
 except Exception:
     HAS_PYPERCLIP = False
+
+# Plugin system
+try:
+    from plugins.plugin_manager import PluginManager
+    HAS_PLUGINS = True
+except Exception:
+    HAS_PLUGINS = False
+    PluginManager = None
 
 
 # ─── Подсветка синтаксиса ─────────────────────────────
@@ -371,10 +382,13 @@ class Editor:
         self._quit_confirm = False
         self.sel_start = None
         self.sel_end = None
-        # autocomplete
         self.completions = []
         self.completion_idx = 0
         self.completion_visible = False
+        # plugins
+        self.plugin_manager = None
+        if HAS_PLUGINS and PluginManager:
+            self.plugin_manager = PluginManager(self)
 
         if filename and os.path.exists(filename):
             try:
@@ -814,6 +828,32 @@ class Editor:
             else:
                 self.message = "Invalid line number"
 
+    def load_plugin_cmd(self, stdscr):
+        if not self.plugin_manager:
+            self.message = "Plugins not available. Install lupa: pip install lupa"
+            return
+        name = self.prompt(stdscr, "Load plugin: ")
+        if not name:
+            return
+        self.message = self.plugin_manager.load_plugin(name)
+
+    def unload_plugin_cmd(self, stdscr):
+        if not self.plugin_manager:
+            self.message = "Plugins not available"
+            return
+        name = self.prompt(stdscr, "Unload plugin: ")
+        if not name:
+            return
+        self.message = self.plugin_manager.unload_plugin(name)
+
+    def list_plugins_cmd(self, stdscr):
+        if not self.plugin_manager:
+            self.message = "Plugins not available"
+            return
+        available = self.plugin_manager.list_plugins()
+        loaded = self.plugin_manager.list_loaded()
+        self.message = f"Plugins: available={','.join(available)} loaded={','.join(loaded)}"
+
     # ─── Отрисовка ────────────────────────────────────────
 
     def _color_for_token(self, kind):
@@ -1053,6 +1093,13 @@ class Editor:
                     self.accept_completion()
                 else:
                     self.show_completions(stdscr)
+            # ── Plugins ──
+            elif code == 12:  # Ctrl+L - load plugin
+                self.load_plugin_cmd(stdscr)
+            elif code == 21:  # Ctrl+U - unload plugin
+                self.unload_plugin_cmd(stdscr)
+            elif code == 16:  # Ctrl+P - list plugins
+                self.list_plugins_cmd(stdscr)
             # ── Навигация / Поиск ──
             elif code == 6:  # Ctrl+F
                 self.find(stdscr)
@@ -1111,6 +1158,59 @@ class Editor:
             # ── Печатные символы (включая Unicode) ──
             elif isinstance(key, str) and code >= 32 and code != 127:
                 self.insert_char(key)
+
+
+# ─── Plugin API methods (monkey-patched at runtime) ───
+
+def _editor_insert_text(self, text):
+    self.save_undo()
+    line = self.lines[self.cursor_y]
+    self.lines[self.cursor_y] = line[:self.cursor_x] + text + line[self.cursor_x:]
+    self.cursor_x += len(text)
+    self.dirty = True
+
+
+def _editor_get_line(self, y=None):
+    if y is None:
+        y = self.cursor_y
+    return self.lines[y] if 0 <= y < len(self.lines) else ""
+
+
+def _editor_set_line(self, y, text):
+    if 0 <= y < len(self.lines):
+        self.save_undo()
+        self.lines[y] = text
+        self.dirty = True
+
+
+def _editor_get_cursor(self):
+    return (self.cursor_y, self.cursor_x)
+
+
+def _editor_set_cursor(self, y, x):
+    self.cursor_y = max(0, min(y, len(self.lines) - 1))
+    self.cursor_x = max(0, min(x, len(self.lines[self.cursor_y])))
+
+
+def _editor_get_text(self):
+    return "\n".join(self.lines)
+
+
+def _editor_set_text(self, text):
+    self.save_undo()
+    self.lines = text.split("\n") if text else [""]
+    self.cursor_y = 0
+    self.cursor_x = 0
+    self.dirty = True
+
+
+Editor.insert_text = _editor_insert_text
+Editor.get_line = _editor_get_line
+Editor.set_line = _editor_set_line
+Editor.get_cursor = _editor_get_cursor
+Editor.set_cursor = _editor_set_cursor
+Editor.get_text = _editor_get_text
+Editor.set_text = _editor_set_text
 
 
 def main():

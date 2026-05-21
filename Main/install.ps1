@@ -49,6 +49,14 @@ foreach ($file in $Files) {
     }
 }
 
+# Copy plugins folder
+$PluginsDir = Join-Path $ScriptDir "plugins"
+if (Test-Path $PluginsDir) {
+    $DestPlugins = Join-Path $InstallDir "plugins"
+    Copy-Item -Path "$PluginsDir\*" -Destination $DestPlugins -Recurse -Force
+    Write-Host "  Copied: plugins/" -ForegroundColor Gray
+}
+
 # Create wnim.bat
 $BatContent = "@echo off`npython `"$InstallDir\wnim.py`" %*"
 $BatPath = "$BinDir\wnim.bat"
