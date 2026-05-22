@@ -53,6 +53,7 @@ foreach ($file in $Files) {
 $PluginsDir = Join-Path $ScriptDir "plugins"
 if (Test-Path $PluginsDir) {
     $DestPlugins = Join-Path $InstallDir "plugins"
+    New-Item -ItemType Directory -Force -Path $DestPlugins | Out-Null
     Copy-Item -Path "$PluginsDir\*" -Destination $DestPlugins -Recurse -Force
     Write-Host "  Copied: plugins/" -ForegroundColor Gray
 }
@@ -64,7 +65,7 @@ $BatPath = "$BinDir\wnim.bat"
 Write-Host "  Created: $BatPath" -ForegroundColor Gray
 
 # Create wnim.ps1
-$PsContent = "param(`$args)`n& python `"$InstallDir\wnim.py`" `$args"
+$PsContent = "python `"$InstallDir\wnim.py`" `$args"
 $PsPath = "$BinDir\wnim.ps1"
 [IO.File]::WriteAllText($PsPath, $PsContent, [Text.Encoding]::UTF8)
 Write-Host "  Created: $PsPath" -ForegroundColor Gray

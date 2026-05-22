@@ -7,19 +7,21 @@ Requirements (Windows):
     pip install windows-curses pyperclip
 
 Usage:
-    python editor.py [file]
+    python editor.py [files...]
+    wnim file1.py file2.py file3.txt
 
 Supported languages: Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS
 
 Hotkeys (Windows-style):
     Ctrl+Space  - autocomplete
-    Ctrl+L      - load plugin
-    Ctrl+U      - unload plugin
-    Ctrl+P      - list plugins
+    Ctrl+T      - new tab
+    Ctrl+W      - close tab
+    F1          - previous tab
+    F2          - next tab
     Ctrl+N      - new file
-    Ctrl+O      - open file
+    Ctrl+O      - open file (in new tab)
     Ctrl+S      - save
-    Ctrl+W      - save as
+    Ctrl+R      - save as
     Ctrl+Q      - quit
     Ctrl+Z      - undo
     Ctrl+Y      - redo
@@ -365,7 +367,8 @@ def get_highlighter(filename):
     return None
 
 
-class Editor:
+class Buffer:
+    """One open file/tab."""
     def __init__(self, filename=None):
         self.filename = filename
         self.lines = [""]
@@ -373,15 +376,34 @@ class Editor:
         self.cursor_x = 0
         self.scroll_y = 0
         self.scroll_x = 0
-        self.clipboard = []
+        self.dirty = False
         self.undo_stack = []
         self.redo_stack = []
-        self.max_undo = 50
-        self.dirty = False
-        self.message = ""
-        self._quit_confirm = False
         self.sel_start = None
         self.sel_end = None
+        if filename and os.path.exists(filename):
+            try:
+                with open(filename, "r", encoding="utf-8") as f:
+                    text = f.read()
+                self.lines = text.split("\n") if text else [""]
+                if not self.lines:
+                    self.lines = [""]
+            except Exception:
+                pass
+
+    @property
+    def title(self):
+        if self.filename:
+            return os.path.basename(self.filename)
+        return "[New]"
+
+
+class Editor:
+    def __init__(self, filenames=None):
+        self.clipboard = []
+        self.max_undo = 50
+        self.message = ""
+        self._quit_confirm = False
         self.completions = []
         self.completion_idx = 0
         self.completion_visible = False
@@ -390,16 +412,99 @@ class Editor:
         if HAS_PLUGINS and PluginManager:
             self.plugin_manager = PluginManager(self)
 
-        if filename and os.path.exists(filename):
-            try:
-                with open(filename, "r", encoding="utf-8") as f:
-                    text = f.read()
-                self.lines = text.split("\n") if text else [""]
-                if not self.lines:
-                    self.lines = [""]
-            except Exception as e:
-                self.message = f"Ошибка открытия: {e}"
+        # Multi-buffer support
+        self.buffers = []
+        self.buffer_idx = 0
+        if filenames:
+            for fn in filenames:
+                self.buffers.append(Buffer(fn))
+        else:
+            self.buffers.append(Buffer())
+        self._sync_from_buffer()
         self.save_undo()
+
+    # ─── Buffer sync ──────────────────────────────────────
+
+    def _sync_from_buffer(self):
+        """Copy current buffer state into Editor attributes."""
+        b = self.buffers[self.buffer_idx]
+        self.filename = b.filename
+        self.lines = b.lines
+        self.cursor_y = b.cursor_y
+        self.cursor_x = b.cursor_x
+        self.scroll_y = b.scroll_y
+        self.scroll_x = b.scroll_x
+        self.dirty = b.dirty
+        self.undo_stack = b.undo_stack
+        self.redo_stack = b.redo_stack
+        self.sel_start = b.sel_start
+        self.sel_end = b.sel_end
+
+    def _sync_to_buffer(self):
+        """Copy Editor attributes back into current buffer."""
+        b = self.buffers[self.buffer_idx]
+        b.filename = self.filename
+        b.lines = self.lines
+        b.cursor_y = self.cursor_y
+        b.cursor_x = self.cursor_x
+        b.scroll_y = self.scroll_y
+        b.scroll_x = self.scroll_x
+        b.dirty = self.dirty
+        b.undo_stack = self.undo_stack
+        b.redo_stack = self.redo_stack
+        b.sel_start = self.sel_start
+        b.sel_end = self.sel_end
+
+    def switch_buffer(self, direction=1):
+        """Switch to next/previous buffer."""
+        if len(self.buffers) <= 1:
+            return
+        self._sync_to_buffer()
+        self.buffer_idx = (self.buffer_idx + direction) % len(self.buffers)
+        self._sync_from_buffer()
+        self.message = f"Tab {self.buffer_idx + 1}/{len(self.buffers)}: {self.buffers[self.buffer_idx].title}"
+
+    def new_buffer(self, filename=None):
+        """Add a new buffer and switch to it."""
+        self._sync_to_buffer()
+        b = Buffer(filename)
+        self.buffers.append(b)
+        self.buffer_idx = len(self.buffers) - 1
+        self._sync_from_buffer()
+        self.save_undo()
+        self.message = f"New tab: {b.title}"
+
+    def close_buffer(self, stdscr=None):
+        """Close current buffer, with save prompt if dirty."""
+        if self.dirty and stdscr:
+            self.message = "Unsaved! Ctrl+W again to close without saving, Ctrl+S to save"
+            self._quit_confirm = True
+            return False
+        self._quit_confirm = False
+        del self.buffers[self.buffer_idx]
+        if not self.buffers:
+            self.buffers.append(Buffer())
+        self.buffer_idx = min(self.buffer_idx, len(self.buffers) - 1)
+        self._sync_from_buffer()
+        self.message = f"Closed. Tab {self.buffer_idx + 1}/{len(self.buffers)}"
+        return True
+
+    def open_file_new_buffer(self, stdscr):
+        """Open a file in a new buffer/tab."""
+        new_name = self.prompt(stdscr, "Open File: ")
+        if not new_name:
+            self.message = "Cancelled"
+            return
+        if not os.path.exists(new_name):
+            self.message = f"File not found: {new_name}"
+            return
+        self._sync_to_buffer()
+        b = Buffer(new_name)
+        self.buffers.append(b)
+        self.buffer_idx = len(self.buffers) - 1
+        self._sync_from_buffer()
+        self.save_undo()
+        self.message = f"Opened: {self.filename}"
 
     # ─── Undo / Redo ──────────────────────────────────────
 
@@ -445,6 +550,7 @@ class Editor:
             with open(self.filename, "w", encoding="utf-8") as f:
                 f.write("\n".join(self.lines))
             self.dirty = False
+            self.buffers[self.buffer_idx].dirty = False
             self.message = "Saved"
         except Exception as e:
             self.message = f"Save error: {e}"
@@ -455,59 +561,46 @@ class Editor:
             self.message = "Cancelled"
             return
         self.filename = new_name
+        self.buffers[self.buffer_idx].filename = new_name
         try:
             with open(self.filename, "w", encoding="utf-8") as f:
                 f.write("\n".join(self.lines))
             self.dirty = False
+            self.buffers[self.buffer_idx].dirty = False
             self.message = f"Saved as {self.filename}"
         except Exception as e:
             self.message = f"Save error: {e}"
 
     def open_file(self, stdscr):
-        if self.dirty:
-            self.message = "Save changes first (Ctrl+S)"
-            return
-        new_name = self.prompt(stdscr, "Open File: ")
-        if not new_name:
-            self.message = "Cancelled"
-            return
-        if not os.path.exists(new_name):
-            self.message = f"File not found: {new_name}"
-            return
-        try:
-            with open(new_name, "r", encoding="utf-8") as f:
-                text = f.read()
-            self.lines = text.split("\n") if text else [""]
-            if not self.lines:
-                self.lines = [""]
-            self.filename = new_name
-            self.cursor_y = 0
-            self.cursor_x = 0
-            self.scroll_y = 0
-            self.scroll_x = 0
-            self.dirty = False
-            self.undo_stack.clear()
-            self.redo_stack.clear()
-            self.save_undo()
-            self.message = f"Opened: {self.filename}"
-        except Exception as e:
-            self.message = f"Open error: {e}"
+        self.open_file_new_buffer(stdscr)
 
     def new_file(self):
-        if self.dirty:
-            self.message = "Save changes first (Ctrl+S)"
-            return
-        self.filename = None
-        self.lines = [""]
-        self.cursor_y = 0
-        self.cursor_x = 0
-        self.scroll_y = 0
-        self.scroll_x = 0
-        self.dirty = False
-        self.undo_stack.clear()
-        self.redo_stack.clear()
+        self.new_buffer()
+
+    def new_buffer(self, filename=None):
+        """Add a new buffer and switch to it."""
+        self._sync_to_buffer()
+        b = Buffer(filename)
+        self.buffers.append(b)
+        self.buffer_idx = len(self.buffers) - 1
+        self._sync_from_buffer()
         self.save_undo()
-        self.message = "New File"
+        self.message = f"New tab: {b.title}"
+
+    def close_buffer(self, stdscr=None):
+        """Close current buffer, with save prompt if dirty."""
+        if self.dirty and stdscr:
+            self.message = "Unsaved! Ctrl+W again to close without saving, Ctrl+S to save"
+            self._quit_confirm = True
+            return False
+        self._quit_confirm = False
+        del self.buffers[self.buffer_idx]
+        if not self.buffers:
+            self.buffers.append(Buffer())
+        self.buffer_idx = min(self.buffer_idx, len(self.buffers) - 1)
+        self._sync_from_buffer()
+        self.message = f"Closed. Tab {self.buffer_idx + 1}/{len(self.buffers)}"
+        return True
 
     # ─── Редактирование ───────────────────────────────────
 
@@ -969,11 +1062,15 @@ class Editor:
                 except curses.error:
                     pass
 
-        # статусная строка — тоже очищаем перед выводом
+        # статусная строка — табы + инфо
+        tab_line = " | ".join(f"[{i+1}] {b.title}" for i, b in enumerate(self.buffers))
+        if len(tab_line) > max_x - 1:
+            # сокращаем если слишком длинно
+            cur = self.buffers[self.buffer_idx]
+            tab_line = f"[{self.buffer_idx+1}] {cur.title} ({len(self.buffers)} tabs)"
         status = (
-            f" {'*' if self.dirty else ' '} "
-            f"{self.filename or '[New File]'} | "
-            f"{self.cursor_y + 1}:{self.cursor_x + 1} | {self.message}"
+            f"{tab_line} | "
+            f"{'*' if self.dirty else ' '} {self.cursor_y + 1}:{self.cursor_x + 1} | {self.message}"
         )
         status = status.ljust(max_x - 1)[: max_x - 1]
         try:
@@ -1027,7 +1124,7 @@ class Editor:
         curses.init_pair(13, curses.COLOR_WHITE, curses.COLOR_BLACK)
         # 14: переменные/подстановки
         curses.init_pair(14, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-
+        
         while True:
             self.draw(stdscr)
             try:
@@ -1064,15 +1161,26 @@ class Editor:
                 break
             self._quit_confirm = False
 
+            # ── Tabs / Buffers ──
+            if code == 20:  # Ctrl+T - new tab
+                self.new_buffer()
+            elif code == 23:  # Ctrl+W - close tab
+                if not self.close_buffer(stdscr):
+                    pass  # waiting for confirmation
+            elif code == curses.KEY_F1:  # F1 - prev tab
+                self.switch_buffer(-1)
+            elif code == curses.KEY_F2:  # F2 - next tab
+                self.switch_buffer(1)
             # ── Файл ──
-            if code == 19:  # Ctrl+S
+            elif code == 19:  # Ctrl+S
                 self.save(stdscr)
-            elif code == 23:  # Ctrl+W
-                self.save_as(stdscr)
             elif code == 15:  # Ctrl+O
                 self.open_file(stdscr)
             elif code == 14:  # Ctrl+N
                 self.new_file()
+            # ── Save As ──
+            elif code == 18:  # Ctrl+R - save as
+                self.save_as(stdscr)
             # ── Undo / Redo ──
             elif code == 26:  # Ctrl+Z
                 self.undo()
@@ -1214,8 +1322,8 @@ Editor.set_text = _editor_set_text
 
 
 def main():
-    filename = sys.argv[1] if len(sys.argv) > 1 else None
-    editor = Editor(filename)
+    filenames = sys.argv[1:] if len(sys.argv) > 1 else None
+    editor = Editor(filenames)
     curses.wrapper(editor.run)
 
 
