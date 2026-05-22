@@ -120,6 +120,7 @@ wnim/
 ├── editor.py          # Main editor code
 ├── wnim.py            # Command-line entry point
 ├── install.ps1        # Windows installer script
+├── Editor_settings.json # Cfg file for editor
 └── README_.md     # This file
 wnim/plugins
 ├── __init__.py          # Init
@@ -149,6 +150,8 @@ pip install lupa
 - Ctrl+U	Delate plugin
 - Ctrl+P	List plugins
 - **Add in dirictory "plugins"
+## Editor_settings.json
+File configurate for WNim(setting themes,fonts and so on.
 ##  Requirements
 
 - **Windows 10/11**
