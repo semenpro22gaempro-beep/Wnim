@@ -10,7 +10,7 @@ Usage:
     python editor.py [files...]
     wnim file1.py file2.py file3.txt
 
-Supported languages: Python, JavaScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS
+Supported languages: Python, JavaScript, TypeScript, C, C++, C#, Bash, Ruby, Lua, PowerShell, Java, Zig, ASM, HTML, CSS, PHP, Go, Rust, Kotlin
 
 Hotkeys (Windows-style):
     Ctrl+Space  - autocomplete
@@ -262,6 +262,198 @@ class CSharpHighlighter(BaseHighlighter):
         super().__init__(keywords, builtins, extra)
 
 
+class TypeScriptHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {
+            "async", "await", "break", "case", "catch", "class", "const",
+            "continue", "debugger", "default", "delete", "do", "else",
+            "enum", "export", "extends", "false", "finally", "for", "function",
+            "if", "import", "in", "instanceof", "interface", "let", "new", "null",
+            "return", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield",
+            "readonly", "abstract", "implements", "type", "namespace", "module",
+            "declare", "public", "private", "protected", "static", "get", "set",
+            "keyof", "infer", "unique", "symbol", "unknown", "never", "any",
+            "as", "is", "satisfies", "asserts", "using",
+        }
+        builtins = {
+            "Array", "Boolean", "Date", "Error", "Function", "JSON",
+            "Math", "Number", "Object", "Promise", "RegExp", "String",
+            "console", "document", "window", "alert", "setTimeout",
+            "setInterval", "clearTimeout", "clearInterval", "parseInt",
+            "parseFloat", "isNaN", "eval", "Map", "Set", "WeakMap",
+            "WeakSet", "Proxy", "Reflect", "Symbol", "Record", "Partial",
+            "Required", "Readonly", "Pick", "Omit", "Exclude", "Extract",
+            "NonNullable", "Parameters", "ReturnType", "InstanceType",
+            "ThisParameterType", "OmitThisParameter", "ThisType",
+            "Uppercase", "Lowercase", "Capitalize", "Uncapitalize",
+            "ArrayBuffer", "Uint8Array", "Int8Array", "Float32Array",
+            "console", "process", "Buffer", "globalThis",
+        }
+        extra = [
+            ("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"),
+            ("TEMPLATE", r"`(?:[^`\\]|\\.|\\\n)*`"),
+            ("TYPE", r"\b[A-Z][a-zA-Z0-9_]*\b"),
+            ("FUNCNAME", r"\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\s*\()"),
+        ]
+        super().__init__(keywords, builtins, extra)
+
+
+class PHPHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {
+            "abstract", "and", "array", "as", "break", "callable", "case",
+            "catch", "class", "clone", "const", "continue", "declare",
+            "default", "die", "do", "echo", "else", "elseif", "empty",
+            "enddeclare", "endfor", "endforeach", "endif", "endswitch",
+            "endwhile", "eval", "exit", "extends", "final", "finally",
+            "fn", "for", "foreach", "function", "global", "goto", "if",
+            "implements", "include", "include_once", "instanceof",
+            "insteadof", "interface", "isset", "list", "match", "namespace",
+            "new", "or", "print", "private", "protected", "public",
+            "readonly", "require", "require_once", "return", "static",
+            "switch", "throw", "trait", "try", "unset", "use", "var",
+            "while", "xor", "yield", "yield from", "true", "false", "null",
+            "self", "parent", "static",
+        }
+        builtins = {
+            "strlen", "strpos", "substr", "str_replace", "explode", "implode",
+            "trim", "ltrim", "rtrim", "strtolower", "strtoupper", "preg_match",
+            "preg_replace", "preg_split", "array_merge", "array_push", "array_pop",
+            "array_shift", "array_unshift", "in_array", "count", "sort", "ksort",
+            "file_get_contents", "file_put_contents", "fopen", "fclose", "fread",
+            "fwrite", "json_encode", "json_decode", "serialize", "unserialize",
+            "date", "time", "strtotime", "md5", "sha1", "base64_encode",
+            "base64_decode", "htmlspecialchars", "strip_tags", "header",
+            "session_start", "setcookie", "die", "exit", "isset", "empty",
+            "unset", "define", "defined", "constant", "var_dump", "print_r",
+            "error_log", "trigger_error", "debug_backtrace", "spl_autoload_register",
+            "mysqli", "PDO", "SimpleXMLElement", "DOMDocument", "DateTime",
+            "Exception", "Throwable", "stdClass", "Closure", "Generator",
+        }
+        extra = [
+            ("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/|#[^\n]*"),
+            ("VAR", r"\$[a-zA-Z_][a-zA-Z0-9_]*|\$\{[^}]*\}"),
+            ("HEREDOC", r"<<<[a-zA-Z_][a-zA-Z0-9_]*\n[\s\S]*?\n[a-zA-Z_][a-zA-Z0-9_]*;?"),
+            ("CONST", r"\b[A-Z][A-Z0-9_]*\b"),
+            ("FUNCNAME", r"\b[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\()"),
+        ]
+        super().__init__(keywords, builtins, extra)
+
+
+class GoHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {
+            "break", "case", "chan", "const", "continue", "default", "defer",
+            "else", "fallthrough", "for", "func", "go", "goto", "if",
+            "import", "interface", "map", "package", "range", "return",
+            "select", "struct", "switch", "type", "var",
+        }
+        builtins = {
+            "append", "cap", "close", "complex", "copy", "delete", "imag",
+            "len", "make", "new", "panic", "print", "println", "real",
+            "recover", "bool", "byte", "complex64", "complex128", "error",
+            "float32", "float64", "int", "int8", "int16", "int32", "int64",
+            "rune", "string", "uint", "uint8", "uint16", "uint32", "uint64",
+            "uintptr", "any", "comparable", "nil", "true", "false",
+            "fmt", "Println", "Printf", "Sprintf", "Errorf", "Scanln",
+            "os", "io", "strings", "strconv", "time", "http", "json",
+            "sync", "context", "testing", "reflect", "sort", "bytes",
+            "bufio", "log", "errors", "regexp", "path", "filepath",
+        }
+        extra = [
+            ("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"),
+            ("RUNE", r"'(?:[^'\\]|\\.)'"),
+            ("RAWSTRING", r"`[^`]*`"),
+            ("TYPE", r"\b[A-Z][a-zA-Z0-9_]*\b"),
+            ("FUNCNAME", r"\b[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\()"),
+        ]
+        super().__init__(keywords, builtins, extra)
+
+
+class RustHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {
+            "as", "async", "await", "break", "const", "continue", "crate",
+            "dyn", "else", "enum", "extern", "false", "fn", "for", "if",
+            "impl", "in", "let", "loop", "match", "mod", "move", "mut",
+            "pub", "ref", "return", "self", "Self", "static", "struct",
+            "super", "trait", "true", "type", "unsafe", "use", "where",
+            "while", "abstract", "become", "box", "do", "final", "macro",
+            "override", "priv", "typeof", "unsized", "virtual", "yield",
+            "try", "union",
+        }
+        builtins = {
+            "Option", "Some", "None", "Result", "Ok", "Err", "Vec", "String",
+            "Box", "Rc", "Arc", "Cell", "RefCell", "Mutex", "RwLock",
+            "HashMap", "BTreeMap", "HashSet", "BTreeSet", "LinkedList",
+            "VecDeque", "BinaryHeap", "Cow", "Pin", "PhantomData", "MaybeUninit",
+            "Drop", "Clone", "Copy", "PartialEq", "Eq", "PartialOrd", "Ord",
+            "Debug", "Display", "Default", "Send", "Sync", "Sized",
+            "println!", "print!", "eprintln!", "eprint!", "format!",
+            "panic!", "assert!", "assert_eq!", "assert_ne!", "debug_assert!",
+            "vec!", "vec", "mem", "slice", "str", "char", "bool", "i8",
+            "i16", "i32", "i64", "i128", "isize", "u8", "u16", "u32",
+            "u64", "u128", "usize", "f32", "f64", "never", "unit",
+            "std", "core", "alloc", "collections", "io", "fs", "path",
+            "thread", "time", "net", "sync", "fmt", "ops", "cmp",
+            "iter", "convert", "any", "borrow", "clone", "default",
+            "hash", "marker", "mem", "num", "ptr", "slice", "str",
+        }
+        extra = [
+            ("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"),
+            ("DOC", r"///[^\n]*|//!"),
+            ("LIFETIME", r"'[a-zA-Z_][a-zA-Z0-9_]*"),
+            ("MACRO", r"[a-zA-Z_][a-zA-Z0-9_]*!"),
+            ("TYPE", r"\b[A-Z][a-zA-Z0-9_]*\b"),
+            ("FUNCNAME", r"\b[a-z_][a-zA-Z0-9_]*(?=\s*\()"),
+        ]
+        super().__init__(keywords, builtins, extra)
+
+
+class KotlinHighlighter(BaseHighlighter):
+    def __init__(self):
+        keywords = {
+            "abstract", "actual", "annotation", "as", "break", "by", "catch",
+            "class", "companion", "const", "constructor", "continue", "crossinline",
+            "data", "delegate", "do", "dynamic", "else", "enum", "expect",
+            "external", "false", "field", "file", "final", "finally", "for",
+            "fun", "get", "if", "import", "in", "infix", "init", "inline",
+            "inner", "interface", "internal", "is", "lateinit", "noinline",
+            "null", "object", "open", "operator", "out", "override", "package",
+            "param", "private", "property", "protected", "public", "receiver",
+            "reified", "return", "sealed", "set", "setparam", "super", "suspend",
+            "tailrec", "this", "throw", "true", "try", "typealias", "typeof",
+            "val", "var", "vararg", "when", "where", "while",
+        }
+        builtins = {
+            "println", "print", "readLine", "readln", "readlnOrNull",
+            "Array", "List", "MutableList", "Set", "MutableSet", "Map",
+            "MutableMap", "String", "Int", "Long", "Short", "Byte", "Float",
+            "Double", "Boolean", "Char", "Unit", "Nothing", "Any", "Comparable",
+            "Number", "Iterable", "Sequence", "Collection", "MutableCollection",
+            "Range", "IntRange", "LongRange", "CharRange", "ClosedRange",
+            "Pair", "Triple", "Result", "Lazy", "lazy", "run", "let", "apply",
+            "also", "with", "takeIf", "takeUnless", "repeat", "require",
+            "requireNotNull", "check", "checkNotNull", "error", "TODO",
+            "emptyList", "listOf", "mutableListOf", "setOf", "mutableSetOf",
+            "mapOf", "mutableMapOf", "arrayOf", "emptyArray", "byteArrayOf",
+            "charArrayOf", "shortArrayOf", "intArrayOf", "longArrayOf",
+            "floatArrayOf", "doubleArrayOf", "booleanArrayOf",
+            "CoroutineScope", "launch", "async", "await", "delay", "yield",
+            "Flow", "flow", "collect", "emit", "map", "filter", "reduce",
+        }
+        extra = [
+            ("COMMENT", r"//[^\n]*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/"),
+            ("DOC", r"/\*\*[^*]*\*+(?:[^/*][^*]*\*+)*/"),
+            ("ANNOTATION", r"@[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?"),
+            ("INTERPOLATION", r"\$\{[^}]*\}|\$[a-zA-Z_]\w*"),
+            ("CLASSNAME", r"\b[A-Z][a-zA-Z0-9_]*\b"),
+            ("FUNCNAME", r"\b[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\()"),
+        ]
+        super().__init__(keywords, builtins, extra)
+
+
 class BashHighlighter(BaseHighlighter):
     def __init__(self):
         keywords = {"if", "then", "else", "elif", "fi", "case", "esac", "for", "while", "until", "do", "done", "in", "function", "return", "break", "continue", "shift", "exit", "export", "local", "readonly", "unset", "declare", "source", "alias"}
@@ -338,8 +530,18 @@ def get_highlighter(filename):
     ext = os.path.splitext(filename)[1].lower()
     if ext == ".py":
         return PythonHighlighter()
-    elif ext in (".js", ".jsx", ".ts", ".tsx"):
+    elif ext in (".js", ".jsx"):
         return JavaScriptHighlighter()
+    elif ext in (".ts", ".tsx"):
+        return TypeScriptHighlighter()
+    elif ext == ".php":
+        return PHPHighlighter()
+    elif ext == ".go":
+        return GoHighlighter()
+    elif ext in (".rs", ".rlib"):
+        return RustHighlighter()
+    elif ext in (".kt", ".kts"):
+        return KotlinHighlighter()
     elif ext in (".c", ".h"):
         return CHighlighter()
     elif ext in (".cpp", ".cc", ".cxx", ".hpp", ".hh"):
@@ -982,6 +1184,13 @@ class Editor:
             "LABEL": 6,
             "DIRECTIVE": 11,
             "REGISTER": 7,
+            "TYPE": 7,
+            "HEREDOC": 8,
+            "RUNE": 8,
+            "RAWSTRING": 8,
+            "DOC": 10,
+            "LIFETIME": 5,
+            "INTERPOLATION": 5,
         }
         return curses.color_pair(mapping.get(kind, 0))
 
