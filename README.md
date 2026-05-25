@@ -11,6 +11,11 @@ Wnim is a lightweight command-line text editor. It combines the minimalism of th
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 
+## Contents
+
+1. [basics.md](basics.md) - Editor basics
+2. [shortcuts.md](shortcuts.md) - Hotkey reference
+3. [plugins.md](plugins.md) - Plugin development guide
 
 
 ##  Installation
@@ -47,111 +52,7 @@ pip install windows-curses pyperclip
 python editor.py filename.py
 ```
 
-## ⌨️ Hotkeys
 
-| Key | Action |
-|-----|--------|
-| `Ctrl+Space` | Autocomplete |
-| `Ctrl+N` | New file |
-| `Ctrl+O` | Open file |
-| `Ctrl+S` | Save |
-| `Ctrl+W` | Save as |
-| `Ctrl+Q` | Quit |
-| `Ctrl+Z` | Undo |
-| `Ctrl+Y` | Redo |
-| `Ctrl+A` | File stats |
-| `Ctrl+C` | Copy line |
-| `Ctrl+X` | Cut line |
-| `Ctrl+V` | Paste |
-| `Ctrl+F` | Find |
-| `Ctrl+G` | Go to line |
-| `Home/End` | Start/End of line |
-| `PgUp/PgDn` | Page up/down |
-| `Tab` | Indent |
-| `Shift+Tab` | Unindent |
-
-##  Supported Languages
-
-| Language | Extensions |
-|----------|------------|
-| Python | `.py` |
-| JavaScript/TypeScript | `.js`, `.jsx`, `.ts`, `.tsx` |
-| C | `.c`, `.h` |
-| C++ | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hh` |
-| C# | `.cs` |
-| Bash | `.sh`, `.bash`, `.zsh` |
-| Ruby | `.rb`, `.erb` |
-| Lua | `.lua` |
-| PowerShell | `.ps1`, `.psm1`, `.psd1` |
-| Java | `.java` |
-| Zig | `.zig` |
-| Assembly | `.asm`, `.s`, `.S` |
-| HTML | `.html`, `.htm`, `.xhtml` |
-| CSS | `.css` |
-
-##  Usage Examples
-
-```powershell
-# Open existing file
-wnim script.py
-
-# Create new file
-wnim
-
-# Open C# file
-wnim Program.cs
-
-# Open Java file
-wnim Main.java
-
-# Open HTML file
-wnim index.html
-
-# Open Zig file
-wnim main.zig
-```
-
-##  Development
-
-### Project Structure
-
-```
-wnim/
-├── editor.py          # Main editor code
-├── wnim.py            # Command-line entry point
-├── install.ps1        # Windows installer script
-├── Editor_settings.json # Cfg file for editor
-└── README_.md     # This file
-wnim/plugins
-├── __init__.py          # Init
-├── plugin_manager.py           # Manager for plugins  
-image/
-|Screenshots of the work
-```
-
-### Modify and Test
-
-1. Edit `editor.py`
-2. Test changes:
-```powershell
-python editor.py test.py
-```
-
-3. Reinstall to update:
-```powershell
-.\install.ps1
-```
-## Plugins
-Download lua
-```powershell
-pip install lupa
-```
-- Ctrl+L	Add plugin 
-- Ctrl+U	Delate plugin
-- Ctrl+P	List plugins
-- **Add in dirictory "plugins"
-## Editor_settings.json
-File configurate for WNim(setting themes,fonts and so on.
 ##  Requirements
 
 - **Windows 10/11**
@@ -159,21 +60,6 @@ File configurate for WNim(setting themes,fonts and so on.
 - **windows-curses** (auto-installed)
 - **pyperclip** (auto-installed, optional for clipboard)
 
-##  Troubleshooting
-
-### "ModuleNotFoundError: No module named '_curses'"
-```powershell
-pip install windows-curses
-```
-
-### "wnim: command not found"
-- Restart your terminal after installation
-- Or add to PATH manually: `%LOCALAPPDATA%\Microsoft\WindowsApps`
-
-### Clipboard not working
-```powershell
-pip install --upgrade pyperclip
-```
 
 ## 📄 License
 
