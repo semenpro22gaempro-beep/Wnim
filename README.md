@@ -59,8 +59,8 @@ python editor.py filename.py
 
 1. Clone or download this repository:
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone [<repository-url>](https://github.com/semenpro22gaempro-beep/Wnim.git)
+cd Wnim
 ```
 
 2. Run the installer:
