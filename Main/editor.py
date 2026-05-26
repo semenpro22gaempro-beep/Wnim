@@ -49,21 +49,34 @@ import sys
 import re
 import platform
 
-# Cross-platform curses import
+# Cross-platform detection
 IS_WINDOWS = platform.system() == "Windows"
 
+# Curses import - Windows needs windows-curses, Linux has built-in curses
 try:
     if IS_WINDOWS:
-        import windows_curses
+        try:
+            import windows_curses
+        except ImportError:
+            print("Warning: windows-curses not installed. Install with: pip install windows-curses")
+    # Linux curses is built into Python
+except ImportError as e:
+    print(f"Error: Cannot import curses module: {e}")
+    print("On Linux, ensure you have python3-curses installed.")
+    print("On Windows, install windows-curses: pip install windows-curses")
+    sys.exit(1)
+
+# Clipboard
+try:
     import pyperclip
     HAS_PYPERCLIP = True
 except Exception:
     HAS_PYPERCLIP = False
     if IS_WINDOWS:
-        print("Warning: windows-curses or pyperclip not installed. Install with: pip install windows-curses pyperclip")
+        print("Warning: pyperclip not installed. Install with: pip install pyperclip")
     else:
         print("Warning: pyperclip not installed. Install with: pip install pyperclip")
-        print("For Linux clipboard support, also install: sudo apt install xclip xsel")
+        print("For Linux clipboard, also consider: sudo apt install xclip xsel")
 
 # Plugin system
 try:
