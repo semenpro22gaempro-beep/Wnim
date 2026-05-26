@@ -1,6 +1,6 @@
 <img width="500" height="500" alt="1000022824 (1)" src="https://github.com/user-attachments/assets/8fc765b0-dd93-4af3-8fea-8d3fb321b93c" />
 
-# WNim — Console Code Editor for Windows
+# WNim — Console Code Editor for Windows and Linux
 
 Wnim is a lightweight command-line text editor. It combines the minimalism of the classic Vim editor with the familiar ergonomics of the Windows operating system. The project is designed for users who value the speed of working in the terminal but don't want to spend time memorizing complex Vim key combinations.
 - Defoult windows hotkeys
@@ -52,6 +52,44 @@ pip install windows-curses pyperclip
 python editor.py filename.py
 ```
 
+
+### Linux
+
+#### Option 1: Automatic Installer (Recommended)
+
+1. Clone or download this repository:
+```bash
+git clone <repository-url>
+cd <repository-folder>
+```
+
+2. Run the installer:
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+3. Restart your terminal and run:
+```bash
+wnim filename.py
+```
+
+#### Option 2: Manual Installation
+
+1. Install Python 3.8+:
+```bash
+sudo apt install python3  # Debian/Ubuntu
+sudo dnf install python3  # Fedora
+```
+
+2. Install dependencies:
+```bash
+pip3 install windows-curses pyperclip lupa
+```
+
+3. Run the editor:
+```bash
+python3 editor.py filename.py
 
 ##  Requirements
 
