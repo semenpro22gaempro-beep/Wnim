@@ -144,6 +144,32 @@ end
 
 ## Plugin Examples
 
+### Built-in Plugins
+
+WNim comes with two example plugins:
+
+#### smart_indent.lua
+
+Productivity plugin with text editing shortcuts:
+
+- **Ctrl+M** - Indent current line (add 4 spaces)
+- **Ctrl+U** - Unindent current line (remove 4 spaces)  
+- **Ctrl+D** - Duplicate current line
+
+#### theme_changer.lua
+
+Theme switching plugin:
+
+- **Ctrl+1** - Dark theme
+- **Ctrl+2** - Light theme
+- **Ctrl+3** - Midnight theme
+- **Ctrl+4** - Monokai theme
+- **Ctrl+T** - Show current theme
+
+Note: Full theme support requires editor.py updates to expose color pair modification API.
+
+See `plugins/README.md` for details.
+
 ### Example 1: Greeting
 
 ```lua
