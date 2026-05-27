@@ -16,38 +16,45 @@ elif command -v python &> /dev/null; then
     PYTHON="python"
 else
     echo "Error: Python not found. Install Python 3.8+ first."
+    echo "Ubuntu/Debian: sudo apt install python3 python3-pip"
+    echo "Fedora: sudo dnf install python3 python3-pip"
     exit 1
 fi
 
 PY_VERSION=$($PYTHON --version 2>&1)
 echo "Found Python: $PY_VERSION"
 
-# Install dependencies
-echo "Installing dependencies (windows-curses, pyperclip, lupa)..."
-$PYTHON -m pip install --user --quiet windows-curses pyperclip lupa || {
+# Install dependencies (curses is built-in on Linux)
+echo ""
+echo "Installing dependencies..."
+$PYTHON -m pip install --user --upgrade pyperclip lupa
+if [ $? -ne 0 ]; then
     echo "Error: Failed to install dependencies"
     exit 1
-}
-echo "Dependencies installed"
+fi
+echo "✓ Dependencies installed"
 
 # Create directories
 mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 mkdir -p "$HOME/.config/wnim"
 
+echo ""
 echo "Install directory: $INSTALL_DIR"
 echo "Config directory: $HOME/.config/wnim"
 
 # Copy files
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+echo ""
+echo "Copying files..."
 for file in editor.py wnim.py README_WNIM.md requirements.txt; do
     src="$SCRIPT_DIR/$file"
     if [ -f "$src" ]; then
         cp "$src" "$INSTALL_DIR/"
-        echo "  Copied: $file"
+        echo "  ✓ $file"
     else
-        echo "  Warning: File not found: $file (skipping)"
+        echo "  ⚠ File not found: $file (skipping)"
     fi
 done
 
@@ -55,24 +62,26 @@ done
 if [ -d "$SCRIPT_DIR/plugins" ]; then
     mkdir -p "$INSTALL_DIR/plugins"
     cp -r "$SCRIPT_DIR/plugins/"* "$INSTALL_DIR/plugins/" 2>/dev/null || true
-    echo "  Copied: plugins/"
+    echo "  ✓ plugins/"
 fi
 
 # Copy docs folder
 if [ -d "$SCRIPT_DIR/docs" ]; then
     mkdir -p "$INSTALL_DIR/docs"
     cp -r "$SCRIPT_DIR/docs/"* "$INSTALL_DIR/docs/" 2>/dev/null || true
-    echo "  Copied: docs/"
+    echo "  ✓ docs/"
 fi
 
 # Create wrapper script
+echo ""
+echo "Creating wrapper script..."
 WRAPPER_CONTENT="#!/bin/bash
 $PYTHON \"$INSTALL_DIR/wnim.py\" \"\$@\""
 
 WRAPPER_PATH="$BIN_DIR/wnim"
 echo "$WRAPPER_CONTENT" > "$WRAPPER_PATH"
 chmod +x "$WRAPPER_PATH"
-echo "  Created: $WRAPPER_PATH"
+echo "  ✓ Created: $WRAPPER_PATH"
 
 # Add to PATH if needed
 if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
@@ -87,12 +96,12 @@ if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
     
     if [ -n "$SHELL_CONFIG" ] && ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$SHELL_CONFIG"; then
         echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_CONFIG"
-        echo "  Added $BIN_DIR to PATH in $SHELL_CONFIG"
+        echo "  ✓ Added $BIN_DIR to PATH in $SHELL_CONFIG"
     fi
 fi
 
 echo ""
-echo "Installation complete!"
+echo "=== Installation complete! ==="
 echo ""
 echo "Usage:"
 echo "  wnim                    - new file"
@@ -114,5 +123,9 @@ echo "  wnim filename.ps1       - open PowerShell file"
 echo "  wnim filename.zig       - open Zig file"
 echo "  wnim filename.sh        - open Bash file"
 echo ""
-echo "If 'wnim' command is not found, run: source $SHELL_CONFIG"
-echo "Or restart your terminal."
+echo "If 'wnim' command is not found:"
+echo "  source ~/.bashrc  # or restart terminal"
+echo ""
+echo "For clipboard support (optional):"
+echo "  sudo apt install xclip xsel  # Ubuntu/Debian"
+echo "  sudo dnf install xclip xsel  # Fedora"
