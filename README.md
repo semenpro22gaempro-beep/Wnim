@@ -25,7 +25,7 @@ Wnim is a lightweight command-line text editor. It combines the minimalism of th
 1. Clone or download this repository:
 ```powershell
 git clone https://github.com/semenpro22gaempro-beep/Wnim.git
-cd Wnim
+cd Wnim/main
 ```
 
 2. Run the installer:
@@ -60,7 +60,7 @@ python editor.py filename.py
 1. Clone or download this repository:
 ```bash
 git clone https://github.com/semenpro22gaempro-beep/Wnim.git
-cd Wnim
+cd Wnim/main
 ```
 
 2. Run the installer:
@@ -97,6 +97,8 @@ python3 editor.py filename.py
 - **Python 3.8+**
 - **windows-curses** (auto-installed)
 - **pyperclip** (auto-installed, optional for clipboard)
+
+
 
 
 ## 📄 License
