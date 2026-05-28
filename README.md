@@ -12,18 +12,16 @@
 2. [Requirements](#-requirements)
 3. [Installation](#-installation)
 4. [Launch](#-launch)
-5. [Keyboard Shortcuts](#-keyboard shortcuts)
+5. [Keyboard Shortcuts](#-shortcuts)
 6. [Supported languages](#-supported-languages)
 7. [Plugins](#-plugins)
-8. [Project Structure] (#-project-structure)
-9. [Documentation](#-documentation)
-10. [Configuration](#-configuration)
-11. [Problem-solving] (#-problem-solving)
-12. [Link] (#-link)
+8. [Documentation](#-documentation)
+9. [Configuration](#-configuration)
+
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Cross-platform**: Windows 10/11 and Linux
 - **Minimalistic interface**: Work in the terminal without graphical dependencies
@@ -39,7 +37,7 @@
 
 ---
 
-## 📦 Requirements
+##  Requirements
 
 ### Minimal
 
@@ -96,7 +94,7 @@ chmod +x install.sh
 
 ---
 
-## ▶️ Launch
+##  Launch
 
 ```bash
 # New file
@@ -165,7 +163,7 @@ python editor.py filename.py
 
 ---
 
-## 🌐 Supported languages
+##  Supported languages
 
 | Extension | Language | Extension | Language |
 |------------|------|------------|------|
@@ -322,7 +320,7 @@ Configure tmux to run through the 'Ctrl+key` combinations in the `~/.tmux.conf` 
 
 ---
 
-## 📞 Connection
+##  Connection
 
 - **Telegram**: [@Loexez](https://t.me/Loexez )
 - **GitHub Issues**: [Open issue](https://github.com/semenpro22gaempro-beep/Wnim/issues )
