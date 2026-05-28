@@ -24,10 +24,20 @@ fi
 PY_VERSION=$($PYTHON --version 2>&1)
 echo "Found Python: $PY_VERSION"
 
+# Ask about lupa
+echo ""
+read -p "Install lupa for plugin support? (y/n) [y]: " -r INSTALL_LUPA
+INSTALL_LUPA=${INSTALL_LUPA:-y}
+
 # Install dependencies (curses is built-in on Linux)
 echo ""
 echo "Installing dependencies..."
-$PYTHON -m pip install --user --upgrade pyperclip lupa
+if [[ "$INSTALL_LUPA" =~ ^[Yy]$ ]] || [[ -z "$INSTALL_LUPA" ]]; then
+    $PYTHON -m pip install --user --upgrade pyperclip lupa
+else
+    $PYTHON -m pip install --user --upgrade pyperclip
+fi
+
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install dependencies"
     exit 1

@@ -25,9 +25,18 @@ if (-not $pythonExe) {
 $pyVersion = & $pythonExe --version 2>&1
 Write-Host "Found Python: $pyVersion" -ForegroundColor Green
 
+# Ask about lupa
+Write-Host ""
+$installLupa = Read-Host "Install lupa for plugin support? (y/n)"
+if ($installLupa -eq "y" -or $installLupa -eq "Y" -or $installLupa -eq "") {
+    $deps = "windows-curses pyperclip lupa"
+} else {
+    $deps = "windows-curses pyperclip"
+}
+
 # Install dependencies
-Write-Host "Installing dependencies (windows-curses, pyperclip, lupa)..." -ForegroundColor Yellow
-& $pythonExe -m pip install --quiet windows-curses pyperclip lupa
+Write-Host "Installing dependencies ($deps)..." -ForegroundColor Yellow
+& $pythonExe -m pip install --quiet $deps
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to install dependencies"
     exit 1
