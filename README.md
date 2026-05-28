@@ -4,66 +4,64 @@
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)
 
-> Легковесный консольный редактор кода для Windows и Linux. Сочетает минимализм Vim с привычными горячими клавишами Windows.
+> Lightweight console-based code editor for Windows and Linux. Combines the minimalism of Vim with the familiar Windows hotkeys.
 
-![WNim Editor](https://github.com/semenpro22gaempro-beep/Wnim/blob/main/Main/README.md?raw=true)
+## 📑 Content
 
-## 📑 Содержание
-
-1. [Особенности](#-особенности)
-2. [Требования](#-требования)
-3. [Установка](#-установка)
-4. [Запуск](#-запуск)
-5. [Горячие клавиши](#-горячие-клавиши)
-6. [Поддерживаемые языки](#-поддерживаемые-языки)
-7. [Плагины](#-плагины)
-8. [Структура проекта](#-структура-проекта)
-9. [Документация](#-документация)
-10. [Конфигурация](#-конфигурация)
-11. [Решение проблем](#-решение-проблем)
-12. [Связь](#-связь)
+1. [Features](#-features)
+2. [Requirements](#-requirements)
+3. [Installation](#-installation)
+4. [Launch](#-launch)
+5. [Keyboard Shortcuts](#-keyboard shortcuts)
+6. [Supported languages](#-supported-languages)
+7. [Plugins](#-plugins)
+8. [Project Structure] (#-project-structure)
+9. [Documentation](#-documentation)
+10. [Configuration](#-configuration)
+11. [Problem-solving] (#-problem-solving)
+12. [Link] (#-link)
 
 ---
 
-## ✨ Особенности
+## ✨ Features
 
-- **Кроссплатформенность**: Windows 10/11 и Linux
-- **Минималистичный интерфейс**: Работа в терминале без графических зависимостей
-- **Подсветка синтаксиса**: 20+ языков программирования
-- **Многовкладочность**: Работа с несколькими файлами одновременно
-- **Автодополнение**: Встроенная система автодополнения кода
-- **Плагины на Lua**: Расширяемая архитектура через Lua-плагины
-- **Undo/Redo**: До 50 уровней отмены изменений
-- **Интеллектуальный ввод**:
-  - Автозакрытие скобок: `()`, `[]`, `{}`, `""`, `''`
-  - Автоматический отступ после `:`, `{`, `[`
-- **Буфер обмена**: Полная поддержка системного буфера
+- **Cross-platform**: Windows 10/11 and Linux
+- **Minimalistic interface**: Work in the terminal without graphical dependencies
+- **Syntax Highlighting**: 20+ programming languages
+- **Multi-debugging**: Working with multiple files at the same time
+- **Auto-completion**: Built-in auto-completion code system
+- **Lua Plugins**: Extensible architecture through Lua plugins
+- **Undo/Redo**: Up to 50 undo levels
+- **Intelligent input**:
+- Auto-closing brackets: `()`, `[]`, `{}`, `""`, `"
+- Automatic indentation after `:`, `{`, `[`
+- **Clipboard**: Full system buffer support
 
 ---
 
-## 📦 Требования
+## 📦 Requirements
 
-### Минимальные
+### Minimal
 
-| Платформа | Требование |
+| Platform | Requirement |
 |-----------|------------|
 | Windows | Windows 10/11, Python 3.8+ |
-| Linux | Любая дистриция с Python 3.8+, терминал с поддержкой curses |
+| Linux | Any version with Python 3.8+, terminal with curses support |
 
-### Зависимости
+### Dependencies
 
-| Платформа | Команда установки |
+| Platform | Installation Command |
 |-----------|-------------------|
 | Windows | `pip install windows-curses pyperclip` |
-| Linux | `pip3 install pyperclip` (curses встроен в Python) |
-| Плагины | `pip install lupa` (опционально) |
-| Clipboard Linux | `sudo apt install xclip xsel` (опционально) |
+| Linux | `pip3 install pyperclip` (curses is built into Python) |
+| Plugins | `pip install lupa` (optional) |
+| Clipboard Linux | `sudo apt install xclip xsel' (optional) |
 
 ---
 
-## 🚀 Установка
+## , Installation
 
-### Автоматическая установка (Рекомендуется)
+### Automatic installation (Recommended)
 
 #### Windows
 ```powershell
@@ -80,96 +78,96 @@ chmod +x install.sh
 ./install.sh
 ```
 
-### Ручная установка
+### Manual installation
 
-1. Установите Python 3.8+
-2. Установите зависимости:
-   ```bash
+1. Install Python 3.8+
+2. Install the dependencies:
+``bash
    # Windows
    pip install windows-curses pyperclip
    
    # Linux
    pip3 install pyperclip
    ```
-3. Запустите редактор:
+3. Launch the editor:
    ```bash
    python editor.py filename.py
    ```
 
 ---
 
-## ▶️ Запуск
+## ▶️ Launch
 
 ```bash
-# Новый файл
+# New file
 wnim
 
-# Открыть файл
+# Open the file
 wnim script.py
 
-# Открыть несколько файлов
+# Open multiple files
 wnim file1.py file2.js file3.txt
 
-# Запуск без установки
+# Running without installing
 python editor.py filename.py
-```
+``
 
 ---
 
-## ⌨️ Горячие клавиши
+## ⌨️ Keyboard shortcuts
 
-### Навигация
-| Клавиша | Действие |
+### Navigation
+| Key | Action |
 |---------|----------|
-| `←` `→` `↑` `↓` | Перемещение курсора |
-| `Home` / `End` | Начало / конец строки |
-| `PgUp` / `PgDn` | Прокрутка на страницу |
-| `Ctrl+F` | Поиск |
-| `Ctrl+G` | Переход к строке |
+| `←` `→` `↑` `↓` | Moving the cursor |
+| `Home` / `End` | Beginning / end of line |
+| `PgUp` / `PgDn` | Scroll to the page |
+| `Ctrl+F` | Search |
+| `Ctrl+G` | Jump to the line |
 
-### Работа с файлами
-| Клавиша | Действие |
+### Working with files
+| Key | Action |
 |---------|----------|
-| `Ctrl+N` | Новый файл |
-| `Ctrl+O` | Открыть файл |
-| `Ctrl+S` | Сохранить |
-| `Ctrl+R` | Сохранить как |
-| `Ctrl+Q` | Выход |
+| `Ctrl+N` | New file |
+| `Ctrl+O` | Open the file |
+| `Ctrl+S` | Save |
+| `Ctrl+R` | Save as |
+| `Ctrl+Q` | Exit |
 
-### Редактирование
-| Клавиша | Действие |
+### Editing
+| Key | Action |
 |---------|----------|
-| `Ctrl+Z` | Отменить |
-| `Ctrl+Y` | Вернуть |
-| `Ctrl+C` | Копировать строку |
-| `Ctrl+X` | Вырезать строку |
-| `Ctrl+V` | Вставить |
-| `Ctrl+K` | Удалить строку |
-| `Tab` | Увеличить отступ |
-| `Shift+Tab` | Уменьшить отступ |
+| `Ctrl+Z` | Cancel |
+| `Ctrl+Y` | Return |
+| `Ctrl+C` | Copy a line |
+| `Ctrl+X` | Cut a line |
+| `Ctrl+V` | Insert |
+| `Ctrl+K` | Delete a line |
+| `Tab` | Increase the indentation |
+| `Shift+Tab` | Reduce the indentation |
 
-### Вкладки (табы)
-| Клавиша | Действие |
+### Tabs (tabs)
+| Key | Action |
 |---------|----------|
-| `Ctrl+T` | Новая вкладка |
-| `Ctrl+W` | Закрыть вкладку |
-| `F1` | Предыдущая вкладка |
-| `F2` | Следующая вкладка |
+| `Ctrl+T` | New tab |
+| `Ctrl+W` | Close the tab |
+| `F1` | Previous tab |
+| `F2` | Next tab |
 
-### Дополнительные функции
-| Клавиша | Действие |
+### Additional functions
+| Key | Action |
 |---------|----------|
-| `Ctrl+Space` | Автодополнение |
-| `Ctrl+A` | Статистика файла |
-| `Ctrl+L` | Загрузить плагин |
-| `Ctrl+U` | Выгрузить плагин |
-| `Ctrl+P` | Список плагинов |
+| `Ctrl+Space` | Auto-completion |
+| `Ctrl+A` | File statistics |
+| `Ctrl+L` | Download the plugin |
+| `Ctrl+U` | To download the plugin |
+| `Ctrl+P` | List of plugins |
 
 ---
 
-## 🌐 Поддерживаемые языки
+## 🌐 Supported languages
 
-| Расширение | Язык | Расширение | Язык |
+| Extension | Language | Extension | Language |
 |------------|------|------------|------|
 | `.py` | Python | `.kt`, `.kts` | Kotlin |
 | `.js`, `.jsx` | JavaScript | `.sh`, `.bash`, `.zsh` | Bash |
@@ -184,45 +182,45 @@ python editor.py filename.py
 
 ---
 
-## 🔌 Плагины
+## 🔌 Plugins
 
-WNim поддерживает плагины на языке Lua через библиотеку `lupa`.
+WNim supports plugins in the Lua language through the `lupa` library.
 
-### Установка поддержки плагинов
+### Installing plugin support
 ```bash
 pip install lupa
 ```
 
-### Встроенные плагины
+### Built-in plugins
 
 #### smart_indent.lua
-- `Ctrl+M` — Увеличить отступ строки
-- `Ctrl+]` — Уменьшить отступ строки
-- `Ctrl+D` — Дублировать строку
+- `Ctrl+M` — Increase line indentation
+- `Ctrl+]` — Reduce line indentation
+- `Ctrl+D' — Duplicate line
 
 #### theme_changer.lua
-- `Ctrl+1` — Тёмная тема
-- `Ctrl+2` — Светлая тема
-- `Ctrl+3` — Midnight тема
-- `Ctrl+4` — Monokai тема
-- `Ctrl+5` — Показать текущую тему
+- `Ctrl+1' — Dark theme
+- `Ctrl+2` is a light theme
+- `Ctrl+3' — Midnight theme
+- `Ctrl+4' — Monokai theme
+- `Ctrl+5` — Show the current theme
 
-### Создание плагинов
+### Creating plugins
 
-См. [docs/plugins.md](docs/plugins.md) для подробного руководства.
+See [docs/plugins.md](docs/plugins.md) for a detailed guide.
 
-Пример простого плагина:
-```lua
+An example of a simple plugin:
+``lua
 local plugin = {}
 
 function plugin.on_load(api)
-    api.editor.message("Плагин загружен!")
+    api.editor.message("The plugin is loaded!")
 end
 
 function plugin.on_key(code)
     if code == 65 then  -- Ctrl+A
-        api.editor.message("Нажат Ctrl+A")
-        return true
+        api.editor.message("Ctrl+A is pressed")
+return true
     end
     return false
 end
@@ -232,53 +230,53 @@ return plugin
 
 ---
 
-## 📁 Структура проекта
+## 📁 Project structure
 
 ```
 Wnim/
-├── Main/                           # Основной код редактора
-│   ├── editor.py                   # Главный файл редактора (~1400 строк)
-│   ├── wnim.py                     # Точка входа для запуска
-│   ├── README.md                   # README для GitHub (эта страница)
-│   ├── install.ps1                 # Инсталлятор для Windows
-│   ├── install.sh                  # Инсталлятор для Linux
-│   ├── editor_settings.json        # Настройки редактора
-│   └── plugins/                    # Система плагинов
+├── Main/                           # The main code of the editor
+│   ├── editor.py # Main editor file (~1400 lines)
+│ ├── wnim.py # Entry point for launch
+,── README.md # README for GitHub (this page)
+,── install.ps1 # Installer for Windows
+,── install.sh # Installer for Linux
+│   ├── editor_settings.json # Editor Settings
+│   └── plugins/                    # Plugin system
 │       ├── __init__.py
-│       ├── plugin_manager.py       # Менеджер плагинов
-│       ├── README.md               # Документация по плагинам
-│       ├── smart_indent.lua        # Плагин умных отступов
-│       └── theme_changer.lua       # Плагин смены тем
+│       ├── plugin_manager.py # Plugin Manager
+,── README.md # Plugin documentation
+,── smart_indent.lua # Smart margins plugin
+│ └── theme_changer.lua # Theme changer plugin
 │
-└── docs/                           # Документация
-    ├── README.md                   # Индекс документации
-    ├── basics.md                   # Основы работы
-    ├── shortcuts.md                # Справка по горячим клавишам
-    ├── plugins.md                  # Руководство по разработке плагинов
-    └── linux.md                    # Оптимизация для Linux
-```
+└── docs/                           # Documentation
+    ,── README.md # Documentation index
+├── basics.md # Basics of work
+    ,── shortcuts.md # Hotkey Help
+    ,── plugins.md # Plugin Development Guide
+    ,── linux.md # Optimization for Linux
+``
 
 ---
 
-## 📚 Документация
+## , Documentation
 
-| Файл | Описание |
+| File | Description |
 |------|----------|
-| [docs/basics.md](docs/basics.md) | Основы работы с редактором |
-| [docs/shortcuts.md](docs/shortcuts.md) | Полная справка по горячим клавишам |
-| [docs/plugins.md](docs/plugins.md) | Руководство по разработке плагинов |
-| [docs/linux.md](docs/linux.md) | Оптимизация для Linux |
-| [Main/plugins/README.md](Main/plugins/README.md) | Документация по плагинам |
+| [docs/basics.md](docs/basics.md) | Basics of working with the editor |
+| [docs/shortcuts.md](docs/shortcuts.md) | Full Hotkey Help |
+| [docs/plugins.md](docs/plugins.md) | Plugin Development Guide |
+| [docs/linux.md](docs/linux.md) | Optimization for Linux |
+| [Main/plugins/README.md](Main/plugins/README.md) | Plugin documentation |
 
 ---
 
-## ⚙️ Конфигурация
+## ⚙️ Configuration
 
-Конфигурационный файл:
+Configuration file:
 - **Windows**: `%USERPROFILE%\.config\wnim\config.json`
 - **Linux**: `~/.config/wnim/config.json`
 
-Пример конфигурации:
+Configuration example:
 ```json
 {
     "theme": "dark",
@@ -292,59 +290,55 @@ Wnim/
 
 ---
 
-## 🛠 Решение проблем
+## 🛠 Problem solving
 
 ### "ModuleNotFoundError: No module named 'curses'"
-**Linux**: curses встроен в Python. Установите модуль:
+**Linux**: curses is built into Python. Install the module:
 ```bash
 sudo apt install python3-curses  # Ubuntu/Debian
 sudo dnf install python3-curses  # Fedora
 ```
-**Важно**: Не устанавливайте `windows-curses` на Linux!
+**Important**: Do not install `windows-curses` on Linux!
 
-### Проблемы с буфером обмена на Linux
+### Clipboard issues on Linux
 ```bash
 sudo apt install xclip xsel  # Ubuntu/Debian
 sudo dnf install xclip xsel  # Fedora
 ```
 
-### "No display name" при запуске
-Установите переменную окружения:
+### "No display name" at startup
+Set the environment variable:
 ```bash
 export DISPLAY=:0
 ```
 
-### Не работают горячие клавиши в tmux
-Настройте tmux для проброса `Ctrl+key` комбинаций в конфигурации `~/.tmux.conf`.
+### Keyboard shortcuts don't work in tmux
+Configure tmux to run through the 'Ctrl+key` combinations in the `~/.tmux.conf` configuration.
 
-### Медленная работа с большими файлами
-1. Откройте менее чем 10,000 строк
-2. Используйте менее ресурсоёмкую тему
-3. Временно отключите плагины
-
----
-
-## 📞 Связь
-
-- **Telegram**: [@Loexez](https://t.me/Loexez)
-- **GitHub Issues**: [Открыть issue](https://github.com/semenpro22gaempro-beep/Wnim/issues)
+### Slow work with large files
+1. Open less than 10,000 lines
+2. Use a less resource-intensive theme.
+3. Temporarily disable plugins
 
 ---
 
-## 📄 Лицензия
+## 📞 Connection
 
-MIT License — свободное использование и модификация.
+- **Telegram**: [@Loexez](https://t.me/Loexez )
+- **GitHub Issues**: [Open issue](https://github.com/semenpro22gaempro-beep/Wnim/issues )
 
 ---
 
-## 🤝 Вклад
+## 📄 License
 
-Все предложения приветствуются! Создавайте pull requests или открывайте issues для багов и новых функций.
+MIT License — free use and modification.
+
+
 
 ---
 
 <div align="center">
 
-**Сделано с ❤️ для разработчиков**
+**Lol**
 
 </div>
