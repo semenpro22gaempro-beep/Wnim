@@ -694,6 +694,8 @@ class Editor:
 
     def _sync_from_buffer(self):
         """Copy current buffer state into Editor attributes."""
+        if not self.buffers or self.buffer_idx >= len(self.buffers):
+            return
         b = self.buffers[self.buffer_idx]
         self.filename = b.filename
         self.lines = b.lines
@@ -709,6 +711,8 @@ class Editor:
 
     def _sync_to_buffer(self):
         """Copy Editor attributes back into current buffer."""
+        if not self.buffers or self.buffer_idx >= len(self.buffers):
+            return
         b = self.buffers[self.buffer_idx]
         b.filename = self.filename
         b.lines = self.lines
@@ -741,9 +745,9 @@ class Editor:
         self.save_undo()
         self.message = f"New tab: {b.title}"
 
-    def close_buffer(self, stdscr=None):
+    def close_buffer(self, stdscr=None, force=False):
         """Close current buffer, with save prompt if dirty."""
-        if self.dirty and stdscr:
+        if self.dirty and stdscr and not force:
             self.message = "Unsaved! Ctrl+W again to close without saving, Ctrl+S to save"
             self._quit_confirm = True
             return False
@@ -1125,7 +1129,7 @@ class Editor:
         popup_y = self.cursor_y - self.scroll_y + 1
         popup_x = code_x + (self.cursor_x - self.scroll_x)
         popup_h = min(len(matches), 8)
-        popup_w = min(max(len(w) for w in matches) + 2, max_x - popup_x)
+        popup_w = min(max(len(w) for w in matches) + 2, max_x - popup_x) if matches else 10
         if popup_y + popup_h >= max_y - 1:
             popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
         for i, word in enumerate(matches[:popup_h]):
@@ -1484,8 +1488,9 @@ class Editor:
             if code == 20:  # Ctrl+T - new tab
                 self.new_buffer()
             elif code == 23:  # Ctrl+W - close tab
-                if not self.close_buffer(stdscr):
+                if not self.close_buffer(stdscr, force=self._quit_confirm):
                     pass  # waiting for confirmation
+                self._quit_confirm = False
             elif code == curses.KEY_F1:  # F1 - prev tab
                 self.switch_buffer(-1)
             elif code == curses.KEY_F2:  # F2 - next tab

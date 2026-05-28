@@ -1,11 +1,11 @@
 -- Smart Indent Plugin for WNim
--- Adds multi-line indent/unindent with Ctrl+M / Ctrl+U
+-- Adds multi-line indent/unindent with Ctrl+M / Alt+U
 -- Also adds duplicate line with Ctrl+D
 
 local plugin = {}
 
 function plugin.on_load(api)
-    api.editor.message("Smart Indent plugin loaded. Ctrl+M=indent, Ctrl+U=unindent, Ctrl+D=duplicate")
+    api.editor.message("Smart Indent loaded. Ctrl+M=indent, Alt+U=unindent, Ctrl+D=duplicate")
 end
 
 function plugin.on_unload()
@@ -68,8 +68,8 @@ function plugin.on_key(code)
         return true
     end
     
-    -- Ctrl+U = unindent (but not if we're in middle of typing)
-    if code == 21 then
+    -- Ctrl+] = unindent (code 29) - changed from Ctrl+U to avoid conflict with unload plugin
+    if code == 29 then
         local y, x = _G.plugin_api.editor.get_cursor()
         local line = _G.plugin_api.editor.get_line(y)
         -- Check if there are spaces to remove

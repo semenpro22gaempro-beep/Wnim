@@ -1,6 +1,6 @@
 -- Theme Changer Plugin for WNim
 -- Allows switching between predefined color themes
--- Hotkeys: Ctrl+1 = Dark, Ctrl+2 = Light, Ctrl+3 = Midnight, Ctrl+4 = Monokai
+-- Hotkeys: Ctrl+1 = Dark, Ctrl+2 = Light, Ctrl+3 = Midnight, Ctrl+4 = Monokai, Ctrl+5 = Show current
 
 local plugin = {}
 
@@ -64,7 +64,7 @@ local current_theme = "dark"
 
 function plugin.on_load(api)
     current_theme = "dark"
-    api.editor.message("Theme Changer loaded. Ctrl+1=Dark, Ctrl+2=Light, Ctrl+3=Midnight, Ctrl+4=Monokai")
+    api.editor.message("Theme Changer loaded. Ctrl+1=Dark, Ctrl+2=Light, Ctrl+3=Midnight, Ctrl+4=Monokai, Ctrl+5=Show")
 end
 
 function plugin.on_unload()
@@ -132,8 +132,8 @@ function plugin.on_key(code)
         return true
     end
     
-    -- Ctrl+T = Show current theme
-    if code == 20 then  -- Ctrl+T
+    -- Ctrl+5 = Show current theme (changed from Ctrl+T to avoid conflict with new tab)
+    if code == 53 then  -- '5'
         _G.plugin_api.editor.message("Current theme: " .. plugin.get_current_theme() .. " | Available: " .. plugin.list_themes())
         return true
     end
