@@ -674,6 +674,11 @@ class Editor:
         self.completion_idx = 0
         self.completion_visible = False
         self._kill_line_repeat = False  # для зажатия Ctrl+K
+        # File menu
+        self.file_menu_visible = False
+        self.file_menu_files = []
+        self.file_menu_idx = 0
+        self.file_menu_scroll = 0
         # plugins
         self.plugin_manager = None
         if HAS_PLUGINS and PluginManager:
@@ -759,6 +764,145 @@ class Editor:
         self._sync_from_buffer()
         self.message = f"Closed. Tab {self.buffer_idx + 1}/{len(self.buffers)}"
         return True
+
+    # ─── File Menu ────────────────────────────────────────
+
+    def toggle_file_menu(self, stdscr):
+        """Toggle file menu visibility."""
+        if self.file_menu_visible:
+            self.file_menu_visible = False
+            self.message = ""
+        else:
+            self.file_menu_visible = True
+            self.file_menu_files = self._get_all_files_in_dir()
+            self.file_menu_idx = 0
+            self.file_menu_scroll = 0
+            current_file = self.buffers[self.buffer_idx].filename
+            if current_file and self.file_menu_files:
+                for i, f in enumerate(self.file_menu_files):
+                    if os.path.basename(f) == os.path.basename(current_file):
+                        self.file_menu_idx = i
+                        break
+
+    def _get_all_files_in_dir(self):
+        """Get list of code files in current directory."""
+        current_dir = os.path.dirname(os.path.abspath(self.filename)) if self.filename else os.getcwd()
+        extensions = {'.py', '.js', '.ts', '.jsx', '.tsx', '.c', '.cpp', '.h', '.hpp', '.cs', 
+                      '.java', '.go', '.rs', '.php', '.html', '.css', '.rb', '.lua', '.ps1', 
+                      '.sh', '.bash', '.zsh', '.js', '.json', '.md', '.txt', '.yaml', '.yml', '.toml'}
+        files = []
+        try:
+            for f in os.listdir(current_dir):
+                full_path = os.path.join(current_dir, f)
+                if os.path.isfile(full_path):
+                    ext = os.path.splitext(f)[1].lower()
+                    if ext in extensions or '.' in f:
+                        files.append(full_path)
+            files.sort(key=lambda x: os.path.basename(x).lower())
+        except Exception:
+            pass
+        return files
+
+    def navigate_file_menu(self, direction=1):
+        """Navigate file menu."""
+        if not self.file_menu_files:
+            return
+        self.file_menu_idx = (self.file_menu_idx + direction) % len(self.file_menu_files)
+        self._ensure_menu_visible()
+
+    def _ensure_menu_visible(self):
+        """Ensure selected file is visible in menu."""
+        if self.file_menu_idx < self.file_menu_scroll:
+            self.file_menu_scroll = self.file_menu_idx
+        elif self.file_menu_idx >= self.file_menu_scroll + 10:
+            self.file_menu_scroll = self.file_menu_idx - 10
+
+    def select_file_in_menu(self, stdscr):
+        """Select file from menu and open it."""
+        if not self.file_menu_files:
+            return
+        selected_file = self.file_menu_files[self.file_menu_idx]
+        # Check if file already open in a buffer
+        for i, buf in enumerate(self.buffers):
+            if buf.filename and os.path.abspath(buf.filename) == os.path.abspath(selected_file):
+                self._sync_to_buffer()
+                self.buffer_idx = i
+                self._sync_from_buffer()
+                self.file_menu_visible = False
+                self.message = f"Opened: {os.path.basename(selected_file)}"
+                return
+        # Open in new buffer
+        self._sync_to_buffer()
+        self.buffers.append(Buffer(selected_file))
+        self.buffer_idx = len(self.buffers) - 1
+        self._sync_from_buffer()
+        self.save_undo()
+        self.file_menu_visible = False
+        self.message = f"Opened: {os.path.basename(selected_file)}"
+
+    def draw_file_menu(self, stdscr):
+        """Draw file menu on the left side."""
+        if not self.file_menu_visible or not self.file_menu_files:
+            return
+        
+        max_y, max_x = stdscr.getmaxyx()
+        menu_width = min(30, max_x - 5)
+        menu_height = min(12, max_y - 4)
+        menu_x = 2
+        menu_y = 2
+        
+        # Draw menu border
+        try:
+            # Top border
+            stdscr.addstr(menu_y, menu_x, "┌" + "─" * menu_width + "┐")
+            # Title
+            title = " Files "
+            stdscr.addstr(menu_y, menu_x + (menu_width - len(title)) // 2, title, curses.A_BOLD)
+            
+            # Bottom border
+            stdscr.addstr(menu_y + menu_height + 1, menu_x, "└" + "─" * menu_width + "┘")
+            
+            # File list
+            for i in range(menu_height):
+                file_idx = self.file_menu_scroll + i
+                if file_idx >= len(self.file_menu_files):
+                    break
+                file_path = self.file_menu_files[file_idx]
+                file_name = os.path.basename(file_path)
+                if len(file_name) > menu_width - 2:
+                    file_name = file_name[:menu_width - 5] + "..."
+                
+                is_selected = file_idx == self.file_menu_idx
+                is_current = self.buffers[self.buffer_idx].filename and \
+                            os.path.abspath(self.buffers[self.buffer_idx].filename) == os.path.abspath(file_path)
+                
+                if is_selected:
+                    attr = curses.A_REVERSE | curses.A_BOLD
+                elif is_current:
+                    attr = curses.color_pair(4) | curses.A_BOLD
+                else:
+                    attr = 0
+                
+                stdscr.addstr(menu_y + 1 + i, menu_x + 2, file_name.ljust(menu_width - 2), attr)
+            
+            # Footer
+            stdscr.addstr(menu_y + menu_height + 1, menu_x + 2, "Enter=open, Esc=close")
+        except curses.error:
+            pass
+        
+        stdscr.refresh()
+
+    def close_current_file(self):
+        """Close current file (for double-click behavior)."""
+        if not self.buffers:
+            return
+        self._sync_to_buffer()
+        del self.buffers[self.buffer_idx]
+        if not self.buffers:
+            self.buffers.append(Buffer())
+        self.buffer_idx = min(self.buffer_idx, len(self.buffers) - 1)
+        self._sync_from_buffer()
+        self.message = "File closed"
 
     def open_file_new_buffer(self, stdscr):
         """Open a file in a new buffer/tab."""
@@ -1406,6 +1550,10 @@ class Editor:
                 stdscr.move(cur_screen_y, cur_screen_x)
             except curses.error:
                 pass
+        
+        # Draw file menu if visible
+        self.draw_file_menu(stdscr)
+        
         stdscr.refresh()
 
     # ─── Главный цикл ─────────────────────────────────────
@@ -1463,7 +1611,25 @@ class Editor:
 
             if code == 27:  # Esc
                 self.completion_visible = False
+                self.file_menu_visible = False
                 self._kill_line_repeat = False
+                continue
+
+            # File menu specific handling
+            if self.file_menu_visible:
+                if code in (10, 13):  # Enter - select file
+                    self.select_file_in_menu(stdscr)
+                    continue
+                elif code == curses.KEY_UP:
+                    self.navigate_file_menu(-1)
+                    continue
+                elif code == curses.KEY_DOWN:
+                    self.navigate_file_menu(1)
+                    continue
+                elif code == curses.KEY_RESIZE:
+                    continue
+                # Close menu on any other key
+                self.file_menu_visible = False
                 continue
 
             # hide completion on most keys
@@ -1528,6 +1694,9 @@ class Editor:
                     self.accept_completion()
                 else:
                     self.show_completions(stdscr)
+            # ── File Menu ──
+            elif code == 5:  # Ctrl+E - toggle file menu
+                self.toggle_file_menu(stdscr)
             # ── Plugins ──
             elif code == 12:  # Ctrl+L - load plugin
                 self.load_plugin_cmd(stdscr)

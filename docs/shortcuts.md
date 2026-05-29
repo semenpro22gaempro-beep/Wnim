@@ -5,6 +5,7 @@
 | Key | Action |
 |-----|--------|
 | Ctrl+Space | Autocomplete |
+| Ctrl+E | File menu (left side) |
 | Ctrl+F | Find text |
 | Ctrl+G | Go to line |
 | Home | Start of line |
@@ -58,11 +59,21 @@
 
 | Key | Action |
 |-----|--------|
+| Ctrl+E | Open file menu (↑↓ to navigate, Enter to open, Esc to close) |
 | Ctrl+L | Load plugin |
 | Ctrl+U | Unload plugin |
 | Ctrl+P | List plugins |
 
-## Notes
+## File Menu Notes
+
+- Press `Ctrl+E` to toggle file menu on the left
+- Menu shows all code files in current directory
+- Use `↑`/`↓` arrows to navigate
+- Press `Enter` to open selected file in new tab
+- Press `Esc` or any other key to close menu
+- Menu is small (12 files visible, 30 chars wide)
+
+## General Notes
 
 - Ctrl+K supports hold for deleting multiple lines
 - Ctrl+O opens file in a new tab

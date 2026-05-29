@@ -28,15 +28,20 @@ Write-Host "Found Python: $pyVersion" -ForegroundColor Green
 # Ask about lupa
 Write-Host ""
 $installLupa = Read-Host "Install lupa for plugin support? (y/n)"
-if ($installLupa -eq "y" -or $installLupa -eq "Y" -or $installLupa -eq "") {
-    $deps = "windows-curses pyperclip lupa"
-} else {
-    $deps = "windows-curses pyperclip"
-}
 
 # Install dependencies
-Write-Host "Installing dependencies ($deps)..." -ForegroundColor Yellow
-& $pythonExe -m pip install --quiet $deps
+Write-Host "Installing dependencies..." -ForegroundColor Yellow
+if ($installLupa -eq "y" -or $installLupa -eq "Y" -or $installLupa -eq "") {
+    & $pythonExe -m pip install --quiet windows-curses pyperclip lupa
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Dependencies installed (with lupa)" -ForegroundColor Green
+    }
+} else {
+    & $pythonExe -m pip install --quiet windows-curses pyperclip
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Dependencies installed" -ForegroundColor Green
+    }
+}
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to install dependencies"
     exit 1
@@ -49,7 +54,7 @@ Write-Host "Install directory: $InstallDir" -ForegroundColor Gray
 
 # Copy files
 $ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
-$Files = @("editor.py", "wnim.py", "README_WNIM.md", "requirements.txt")
+$Files = @("editor.py", "wnim.py", "README.md", "requirements.txt")
 foreach ($file in $Files) {
     $src = Join-Path $ScriptDir $file
     if (Test-Path $src) {

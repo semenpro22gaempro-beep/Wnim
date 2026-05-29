@@ -4,47 +4,51 @@
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)
 
-> Lightweight console-based code editor for Windows and Linux. Combines the minimalism of Vim with the familiar Windows hotkeys.
+> A lightweight console code editor for Windows and Linux. Combines Vim's minimalism with familiar Windows keyboard shortcuts.
 
-## 📑 Content
+![WNim Editor](https://github.com/semenpro22gaempro-beep/Wnim/blob/main/Main/README.md?raw=true)
+
+## 📑 Table of Contents
 
 1. [Features](#-features)
 2. [Requirements](#-requirements)
 3. [Installation](#-installation)
-4. [Launch](#-launch)
-5. [Keyboard Shortcuts](#-shortcuts)
-6. [Supported languages](#-supported-languages)
+4. [Usage](#-usage)
+5. [Keyboard Shortcuts](#-keyboard-shortcuts)
+6. [Supported Languages](#-supported-languages)
 7. [Plugins](#-plugins)
-8. [Documentation](#-documentation)
-9. [Configuration](#-configuration)
-
+8. [Project Structure](#-project-structure)
+9. [Documentation](#-documentation)
+10. [Configuration](#-configuration)
+11. [Troubleshooting](#-troubleshooting)
+12. [Contact](#-contact)
 
 ---
 
-##  Features
+## ✨ Features
 
 - **Cross-platform**: Windows 10/11 and Linux
-- **Minimalistic interface**: Work in the terminal without graphical dependencies
-- **Syntax Highlighting**: 20+ programming languages
-- **Multi-debugging**: Working with multiple files at the same time
-- **Auto-completion**: Built-in auto-completion code system
-- **Lua Plugins**: Extensible architecture through Lua plugins
-- **Undo/Redo**: Up to 50 undo levels
-- **Intelligent input**:
-- Auto-closing brackets: `()`, `[]`, `{}`, `""`, `"
-- Automatic indentation after `:`, `{`, `[`
-- **Clipboard**: Full system buffer support
+- **Minimalistic interface**: Terminal-based, no GUI dependencies
+- **Syntax highlighting**: 20+ programming languages
+- **Multi-tab support**: Work with multiple files simultaneously
+- **Auto-completion**: Built-in code completion system
+- **Lua plugins**: Extensible architecture via Lua plugins
+- **Undo/Redo**: Up to 50 levels of undo
+- **Smart input**:
+  - Auto-closing brackets: `()`, `[]`, `{}`, `""`, `''`
+  - Automatic indentation after `:`, `{`, `[`
+- **Clipboard**: Full support for system clipboard
 
 ---
 
-##  Requirements
+## 📦 Requirements
 
-### Minimal
+### Minimum
 
 | Platform | Requirement |
 |-----------|------------|
 | Windows | Windows 10/11, Python 3.8+ |
-| Linux | Any version with Python 3.8+, terminal with curses support |
+| Linux | Any distribution with Python 3.8+, terminal with curses support |
 
 ### Dependencies
 
@@ -53,13 +57,13 @@
 | Windows | `pip install windows-curses pyperclip` |
 | Linux | `pip3 install pyperclip` (curses is built into Python) |
 | Plugins | `pip install lupa` (optional) |
-| Clipboard Linux | `sudo apt install xclip xsel' (optional) |
+| Clipboard Linux | `sudo apt install xclip xsel` (optional) |
 
 ---
 
-## , Installation
+## 🚀 Installation
 
-### Automatic installation (Recommended)
+### Automatic Installation (Recommended)
 
 #### Windows
 ```powershell
@@ -76,58 +80,59 @@ chmod +x install.sh
 ./install.sh
 ```
 
-### Manual installation
+### Manual Installation
 
 1. Install Python 3.8+
-2. Install the dependencies:
-``bash
+2. Install dependencies:
+   ```bash
    # Windows
    pip install windows-curses pyperclip
    
    # Linux
    pip3 install pyperclip
    ```
-3. Launch the editor:
+3. Run the editor:
    ```bash
    python editor.py filename.py
    ```
 
 ---
 
-##  Launch
+## ▶️ Usage
 
 ```bash
 # New file
 wnim
 
-# Open the file
+# Open file
 wnim script.py
 
 # Open multiple files
 wnim file1.py file2.js file3.txt
 
-# Running without installing
+# Run without installation
 python editor.py filename.py
-``
+```
 
 ---
 
-## ⌨️ Keyboard shortcuts
+## ⌨️ Keyboard Shortcuts
 
 ### Navigation
 | Key | Action |
 |---------|----------|
-| `←` `→` `↑` `↓` | Moving the cursor |
+| `←` `→` `↑` `↓` | Move cursor |
 | `Home` / `End` | Beginning / end of line |
-| `PgUp` / `PgDn` | Scroll to the page |
+| `PgUp` / `PgDn` | Scroll page up/down |
 | `Ctrl+F` | Search |
-| `Ctrl+G` | Jump to the line |
+| `Ctrl+G` | Go to line |
+| `Ctrl+E` | File menu (left side) |
 
-### Working with files
+### File Operations
 | Key | Action |
 |---------|----------|
 | `Ctrl+N` | New file |
-| `Ctrl+O` | Open the file |
+| `Ctrl+O` | Open file |
 | `Ctrl+S` | Save |
 | `Ctrl+R` | Save as |
 | `Ctrl+Q` | Exit |
@@ -135,35 +140,36 @@ python editor.py filename.py
 ### Editing
 | Key | Action |
 |---------|----------|
-| `Ctrl+Z` | Cancel |
-| `Ctrl+Y` | Return |
-| `Ctrl+C` | Copy a line |
-| `Ctrl+X` | Cut a line |
-| `Ctrl+V` | Insert |
-| `Ctrl+K` | Delete a line |
-| `Tab` | Increase the indentation |
-| `Shift+Tab` | Reduce the indentation |
+| `Ctrl+Z` | Undo |
+| `Ctrl+Y` | Redo |
+| `Ctrl+C` | Copy line |
+| `Ctrl+X` | Cut line |
+| `Ctrl+V` | Paste |
+| `Ctrl+K` | Delete line |
+| `Tab` | Increase indent |
+| `Shift+Tab` | Decrease indent |
 
-### Tabs (tabs)
+### Tabs
 | Key | Action |
 |---------|----------|
 | `Ctrl+T` | New tab |
-| `Ctrl+W` | Close the tab |
+| `Ctrl+W` | Close tab |
 | `F1` | Previous tab |
 | `F2` | Next tab |
 
-### Additional functions
+### Additional Functions
 | Key | Action |
 |---------|----------|
 | `Ctrl+Space` | Auto-completion |
+| `Ctrl+E` | File menu (navigate ↑↓, Enter to open, Esc to close) |
 | `Ctrl+A` | File statistics |
-| `Ctrl+L` | Download the plugin |
-| `Ctrl+U` | To download the plugin |
-| `Ctrl+P` | List of plugins |
+| `Ctrl+L` | Load plugin |
+| `Ctrl+U` | Unload plugin |
+| `Ctrl+P` | List plugins |
 
 ---
 
-##  Supported languages
+## 🌐 Supported Languages
 
 | Extension | Language | Extension | Language |
 |------------|------|------------|------|
@@ -182,43 +188,43 @@ python editor.py filename.py
 
 ## 🔌 Plugins
 
-WNim supports plugins in the Lua language through the `lupa` library.
+WNim supports plugins written in Lua via the `lupa` library.
 
-### Installing plugin support
+### Installing Plugin Support
 ```bash
 pip install lupa
 ```
 
-### Built-in plugins
+### Built-in Plugins
 
 #### smart_indent.lua
 - `Ctrl+M` — Increase line indentation
-- `Ctrl+]` — Reduce line indentation
-- `Ctrl+D' — Duplicate line
+- `Ctrl+]` — Decrease line indentation
+- `Ctrl+D` — Duplicate line
 
 #### theme_changer.lua
-- `Ctrl+1' — Dark theme
-- `Ctrl+2` is a light theme
-- `Ctrl+3' — Midnight theme
-- `Ctrl+4' — Monokai theme
-- `Ctrl+5` — Show the current theme
+- `Ctrl+1` — Dark theme
+- `Ctrl+2` — Light theme
+- `Ctrl+3` — Midnight theme
+- `Ctrl+4` — Monokai theme
+- `Ctrl+5` — Show current theme
 
-### Creating plugins
+### Creating Plugins
 
 See [docs/plugins.md](docs/plugins.md) for a detailed guide.
 
-An example of a simple plugin:
-``lua
+Example of a simple plugin:
+```lua
 local plugin = {}
 
 function plugin.on_load(api)
-    api.editor.message("The plugin is loaded!")
+    api.editor.message("Plugin loaded!")
 end
 
 function plugin.on_key(code)
     if code == 65 then  -- Ctrl+A
-        api.editor.message("Ctrl+A is pressed")
-return true
+        api.editor.message("Ctrl+A pressed")
+        return true
     end
     return false
 end
@@ -228,53 +234,53 @@ return plugin
 
 ---
 
-## 📁 Project structure
+## 📁 Project Structure
 
 ```
 Wnim/
-├── Main/                           # The main code of the editor
-│   ├── editor.py # Main editor file (~1400 lines)
-│ ├── wnim.py # Entry point for launch
-,── README.md # README for GitHub (this page)
-,── install.ps1 # Installer for Windows
-,── install.sh # Installer for Linux
-│   ├── editor_settings.json # Editor Settings
+├── Main/                           # Main editor code
+│   ├── editor.py                   # Main editor file (~1400 lines)
+│   ├── wnim.py                     # Entry point for running
+│   ├── README.md                   # README for GitHub (this page)
+│   ├── install.ps1                 # Installer for Windows
+│   ├── install.sh                  # Installer for Linux
+│   ├── editor_settings.json        # Editor settings
 │   └── plugins/                    # Plugin system
 │       ├── __init__.py
-│       ├── plugin_manager.py # Plugin Manager
-,── README.md # Plugin documentation
-,── smart_indent.lua # Smart margins plugin
-│ └── theme_changer.lua # Theme changer plugin
+│       ├── plugin_manager.py       # Plugin manager
+│       ├── README.md               # Plugin documentation
+│       ├── smart_indent.lua        # Smart indentation plugin
+│       └── theme_changer.lua       # Theme changer plugin
 │
 └── docs/                           # Documentation
-    ,── README.md # Documentation index
-├── basics.md # Basics of work
-    ,── shortcuts.md # Hotkey Help
-    ,── plugins.md # Plugin Development Guide
-    ,── linux.md # Optimization for Linux
-``
+    ├── README.md                   # Documentation index
+    ├── basics.md                   # Getting started
+    ├── shortcuts.md                # Keyboard shortcuts reference
+    ├── plugins.md                  # Plugin development guide
+    └── linux.md                    # Linux optimization
+```
 
 ---
 
-## , Documentation
+## 📚 Documentation
 
 | File | Description |
 |------|----------|
-| [docs/basics.md](docs/basics.md) | Basics of working with the editor |
-| [docs/shortcuts.md](docs/shortcuts.md) | Full Hotkey Help |
-| [docs/plugins.md](docs/plugins.md) | Plugin Development Guide |
-| [docs/linux.md](docs/linux.md) | Optimization for Linux |
+| [docs/basics.md](docs/basics.md) | Getting started with the editor |
+| [docs/shortcuts.md](docs/shortcuts.md) | Complete keyboard shortcuts reference |
+| [docs/plugins.md](docs/plugins.md) | Plugin development guide |
+| [docs/linux.md](docs/linux.md) | Linux optimization |
 | [Main/plugins/README.md](Main/plugins/README.md) | Plugin documentation |
 
 ---
 
 ## ⚙️ Configuration
 
-Configuration file:
+Configuration file locations:
 - **Windows**: `%USERPROFILE%\.config\wnim\config.json`
 - **Linux**: `~/.config/wnim/config.json`
 
-Configuration example:
+Example configuration:
 ```json
 {
     "theme": "dark",
@@ -288,7 +294,7 @@ Configuration example:
 
 ---
 
-## 🛠 Problem solving
+## 🛠 Troubleshooting
 
 ### "ModuleNotFoundError: No module named 'curses'"
 **Linux**: curses is built into Python. Install the module:
@@ -296,7 +302,7 @@ Configuration example:
 sudo apt install python3-curses  # Ubuntu/Debian
 sudo dnf install python3-curses  # Fedora
 ```
-**Important**: Do not install `windows-curses` on Linux!
+**Important**: Do NOT install `windows-curses` on Linux!
 
 ### Clipboard issues on Linux
 ```bash
@@ -304,39 +310,43 @@ sudo apt install xclip xsel  # Ubuntu/Debian
 sudo dnf install xclip xsel  # Fedora
 ```
 
-### "No display name" at startup
+### "No display name" on startup
 Set the environment variable:
 ```bash
 export DISPLAY=:0
 ```
 
-### Keyboard shortcuts don't work in tmux
-Configure tmux to run through the 'Ctrl+key` combinations in the `~/.tmux.conf` configuration.
+### Keyboard shortcuts not working in tmux
+Configure tmux to forward `Ctrl+key` combinations in `~/.tmux.conf`.
 
-### Slow work with large files
-1. Open less than 10,000 lines
-2. Use a less resource-intensive theme.
+### Slow performance with large files
+1. Open files with less than 10,000 lines
+2. Use a less resource-intensive theme
 3. Temporarily disable plugins
 
 ---
 
-##  Connection
+## 📞 Contact
 
-- **Telegram**: [@Loexez](https://t.me/Loexez )
-- **GitHub Issues**: [Open issue](https://github.com/semenpro22gaempro-beep/Wnim/issues )
+- **Telegram**: [@Loexez](https://t.me/Loexez)
+- **GitHub Issues**: [Open an issue](https://github.com/semenpro22gaempro-beep/Wnim/issues)
 
 ---
 
 ## 📄 License
 
-MIT License — free use and modification.
+MIT License — free to use and modify.
 
+---
 
+## 🤝 Contributing
+
+All contributions are welcome! Create pull requests or open issues for bugs and new features.
 
 ---
 
 <div align="center">
 
-**Lol**
+**Made with ❤️ for developers**
 
 </div>

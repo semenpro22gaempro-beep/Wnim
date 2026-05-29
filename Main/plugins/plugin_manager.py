@@ -1,4 +1,4 @@
-﻿"""WNim Plugin Manager - loads Lua plugins via lupa"""
+"""WNim Plugin Manager - loads Lua plugins via lupa"""
 
 import os
 import sys
@@ -115,4 +115,3 @@ class PluginManager:
 
     def list_loaded(self):
         return list(self.plugins.keys())
-

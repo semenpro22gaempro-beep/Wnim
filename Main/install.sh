@@ -58,7 +58,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
 echo "Copying files..."
-for file in editor.py wnim.py README_WNIM.md requirements.txt; do
+for file in editor.py wnim.py README.md requirements.txt; do
     src="$SCRIPT_DIR/$file"
     if [ -f "$src" ]; then
         cp "$src" "$INSTALL_DIR/"
