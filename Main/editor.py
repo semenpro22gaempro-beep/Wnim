@@ -20,7 +20,6 @@ Hotkeys:
     F1          - previous tab
     F2          - next tab
     Ctrl+N      - new file
-    Ctrl+O      - open file (in new tab)
     Ctrl+S      - save
     Ctrl+R      - save as
     Ctrl+Q      - quit
@@ -125,7 +124,7 @@ def linux_clipboard_set(text):
             return False
 
 
-# ─── Подсветка синтаксиса ─────────────────────────────
+# ─── Syntax Highlighting ─────────────────────────────
 
 class BaseHighlighter:
     BASE_SPECS = [
@@ -141,12 +140,12 @@ class BaseHighlighter:
         self.keywords = set(keywords)
         self.builtins = set(builtins) if builtins else set()
         specs = []
-        # сначала extra_specs (комментарии, декораторы и т.д.)
+        # first extra_specs (comments, decorators, etc.)
         if extra_specs:
             specs.extend(extra_specs)
-        # потом базовые
+        # then basics
         specs.extend(self.BASE_SPECS)
-        # вставляем ключевые слова и встроенные
+        # insert keywords and builtins
         kw_pattern = r"\b(?:" + "|".join(sorted(self.keywords)) + r")\b"
         bi_pattern = r"\b(?:" + "|".join(sorted(self.builtins)) + r")\b" if self.builtins else r"$^"
         specs.insert(-3, ("BUILTIN", bi_pattern))
@@ -673,7 +672,7 @@ class Editor:
         self.completions = []
         self.completion_idx = 0
         self.completion_visible = False
-        self._kill_line_repeat = False  # для зажатия Ctrl+K
+        self._kill_line_repeat = False  # for holding Ctrl+K
         # File menu
         self.file_menu_visible = False
         self.file_menu_files = []
@@ -757,10 +756,14 @@ class Editor:
             self._quit_confirm = True
             return False
         self._quit_confirm = False
+        total = len(self.buffers)
         del self.buffers[self.buffer_idx]
         if not self.buffers:
             self.buffers.append(Buffer())
-        self.buffer_idx = min(self.buffer_idx, len(self.buffers) - 1)
+            self.buffer_idx = 0
+        else:
+            if self.buffer_idx >= len(self.buffers):
+                self.buffer_idx = len(self.buffers) - 1
         self._sync_from_buffer()
         self.message = f"Closed. Tab {self.buffer_idx + 1}/{len(self.buffers)}"
         return True
@@ -806,6 +809,8 @@ class Editor:
     def navigate_file_menu(self, direction=1):
         """Navigate file menu."""
         if not self.file_menu_files:
+            return
+        if len(self.file_menu_files) == 0:
             return
         self.file_menu_idx = (self.file_menu_idx + direction) % len(self.file_menu_files)
         self._ensure_menu_visible()
@@ -900,7 +905,10 @@ class Editor:
         del self.buffers[self.buffer_idx]
         if not self.buffers:
             self.buffers.append(Buffer())
-        self.buffer_idx = min(self.buffer_idx, len(self.buffers) - 1)
+            self.buffer_idx = 0
+        else:
+            if self.buffer_idx >= len(self.buffers):
+                self.buffer_idx = len(self.buffers) - 1
         self._sync_from_buffer()
         self.message = "File closed"
 
@@ -952,7 +960,7 @@ class Editor:
         else:
             self.message = "Nothing to redo"
 
-    # ─── Файл ─────────────────────────────────────────────
+    # ─── File ─────────────────────────────────────────────
 
     def save(self, stdscr=None):
         if not self.filename:
@@ -992,17 +1000,17 @@ class Editor:
     def new_file(self):
         self.new_buffer()
 
-    # ─── Редактирование ───────────────────────────────────
+    # ─── Editing ───────────────────────────────────
 
     BRACKET_PAIRS = {"(": ")", "[": "]", "{": "}", "\"": "\"", "'": "'"}
 
     def _get_indent(self, line):
-        """Возвращает текущий отступ строки в пробелах."""
+        """Returns the current line indentation in spaces."""
         stripped = line.lstrip(" ")
         return len(line) - len(stripped)
 
     def _should_increase_indent(self, line):
-        """Проверяет, нужно ли увеличить отступ (заканчивается на : или { или [)."""
+        """Checks if indentation should be increased (ends with : or { or [)."""
         stripped = line.rstrip()
         if not stripped:
             return False
@@ -1012,33 +1020,33 @@ class Editor:
         self.save_undo()
         line = self.lines[self.cursor_y]
         
-        # умное поведение для закрывающих скобок/кавычек
+        # smart behavior for closing brackets/quotes
         if ch in ')]}':
             after_cursor = line[self.cursor_x:self.cursor_x + 1] if self.cursor_x < len(line) else ""
             if after_cursor == ch:
-                # просто перемещаем курсор вперёд
+                # just move cursor forward
                 self.cursor_x += 1
                 self.dirty = True
                 return
         elif ch in ('"', "'"):
-            # для кавычек — если под курсором та же кавычка, просто перемещаемся
+            # for quotes - if same quote under cursor, just move
             after_cursor = line[self.cursor_x:self.cursor_x + 1] if self.cursor_x < len(line) else ""
             if after_cursor == ch:
                 self.cursor_x += 1
                 self.dirty = True
                 return
         
-        # авто-закрытие скобок/кавычек — только если за ними нет закрывающего символа
+        # auto-close brackets/quotes - only if no closing symbol after
         if ch in self.BRACKET_PAIRS:
             closing = self.BRACKET_PAIRS[ch]
-            # проверяем, не стоит ли уже закрывающий символ после курсора
+            # check if closing symbol already after cursor
             after_cursor = line[self.cursor_x:self.cursor_x + 1] if self.cursor_x < len(line) else ""
             if after_cursor != closing:
-                # вставляем пару скобок
+                # insert bracket pair
                 self.lines[self.cursor_y] = (
                     line[: self.cursor_x] + ch + closing + line[self.cursor_x :]
                 )
-                self.cursor_x += 1  # ставим курсор между скобками
+                self.cursor_x += 1  # place cursor between brackets
             else:
                 self.lines[self.cursor_y] = line[: self.cursor_x] + ch + line[self.cursor_x :]
                 self.cursor_x += len(ch)
@@ -1053,15 +1061,15 @@ class Editor:
         before = line[: self.cursor_x]
         after = line[self.cursor_x :]
 
-        # определяем базовый отступ
+        # determine base indentation
         current_indent = self._get_indent(line)
         new_indent = current_indent
 
-        # если строка заканчивается на {, [ или : — увеличиваем отступ
+        # if line ends with {, [ or : - increase indentation
         if self._should_increase_indent(before):
             new_indent += 4
 
-        # если после курсора только закрывающая скобка — создаём промежуточную строку
+        # if only closing bracket after cursor - create intermediate line
         if after.strip() in ")}]" and self._should_increase_indent(before):
             self.lines[self.cursor_y] = before
             middle = " " * new_indent
@@ -1117,7 +1125,7 @@ class Editor:
     def unindent(self):
         self.save_undo()
         line = self.lines[self.cursor_y]
-        # удалить до 4 пробелов слева от курсора
+        # remove up to 4 spaces before cursor
         spaces = 0
         start = max(0, self.cursor_x - 4)
         for i in range(self.cursor_x - 1, start - 1, -1):
@@ -1131,13 +1139,13 @@ class Editor:
             self.dirty = True
 
     def kill_line(self):
-        """Удалить текущую строку (Ctrl+K). Копирует в буфер обмена."""
+        """Delete current line (Ctrl+K). Copies to clipboard."""
         if len(self.lines) == 1 and self.lines[0] == "":
             self.message = "Nothing to delete"
             return
         self.save_undo()
         text = self.lines[self.cursor_y]
-        # копируем в буфер обмена
+        # copy to clipboard
         if HAS_PYPERCLIP:
             try:
                 pyperclip.copy(text)
@@ -1150,13 +1158,15 @@ class Editor:
         del self.lines[self.cursor_y]
         if not self.lines:
             self.lines = [""]
-        if self.cursor_y >= len(self.lines):
-            self.cursor_y = len(self.lines) - 1
+            self.cursor_y = 0
+        else:
+            if self.cursor_y >= len(self.lines):
+                self.cursor_y = len(self.lines) - 1
         self.cursor_x = 0
         self.dirty = True
         self.message = "Line deleted"
 
-    # ─── Буфер обмена ─────────────────────────────────────
+    # ─── Clipboard ─────────────────────────────────────
 
     def copy(self):
         text = self.lines[self.cursor_y]
@@ -1240,7 +1250,7 @@ class Editor:
         line = self.lines[self.cursor_y]
         x = self.cursor_x
         start = x
-        while start > 0 and line[start - 1].isalnum() or (start > 0 and line[start - 1] == '_'):
+        while start > 0 and (line[start - 1].isalnum() or line[start - 1] == '_'):
             start -= 1
         return line[start:x], start
 
@@ -1272,10 +1282,19 @@ class Editor:
         # draw popup
         popup_y = self.cursor_y - self.scroll_y + 1
         popup_x = code_x + (self.cursor_x - self.scroll_x)
+        # Protection against going out of screen bounds
+        if popup_x < 0:
+            popup_x = 0
+        if popup_x >= max_x - 1:
+            popup_x = max_x - 10
+            if popup_x < 0:
+                popup_x = 0
         popup_h = min(len(matches), 8)
         popup_w = min(max(len(w) for w in matches) + 2, max_x - popup_x) if matches else 10
         if popup_y + popup_h >= max_y - 1:
             popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
+        if popup_y < 0:
+            popup_y = 0
         for i, word in enumerate(matches[:popup_h]):
             attr = curses.A_REVERSE if i == 0 else 0
             try:
@@ -1324,12 +1343,18 @@ class Editor:
 
     def prompt(self, stdscr, prompt_text):
         max_y, max_x = stdscr.getmaxyx()
+        if max_x < len(prompt_text) + 5:
+            self.message = "Terminal too small for input"
+            return None
         s = ""
         while True:
             line = (prompt_text + s)[: max_x - 1]
-            stdscr.addstr(max_y - 1, 0, line, curses.color_pair(1))
-            stdscr.clrtoeol()
-            stdscr.refresh()
+            try:
+                stdscr.addstr(max_y - 1, 0, line, curses.color_pair(1))
+                stdscr.clrtoeol()
+                stdscr.refresh()
+            except curses.error:
+                pass
             try:
                 key = stdscr.get_wch()
             except curses.error:
@@ -1353,6 +1378,10 @@ class Editor:
             self.message = "Search cancelled"
             return
         if not query:
+            self.message = "Empty search"
+            return
+        if not self.lines or (len(self.lines) == 1 and not self.lines[0]):
+            self.message = "No content to search"
             return
         total = len(self.lines)
         for offset in range(total):
@@ -1369,13 +1398,18 @@ class Editor:
 
     def goto(self, stdscr):
         s = self.prompt(stdscr, "Go to line: ")
-        if s and s.isdigit():
+        if not s:
+            return
+        try:
             num = int(s) - 1
             if 0 <= num < len(self.lines):
                 self.cursor_y = num
                 self.cursor_x = 0
+                self.message = f"Line {num + 1}"
             else:
-                self.message = "Invalid line number"
+                self.message = f"Line {num + 1} out of range (1-{len(self.lines)})"
+        except ValueError:
+            self.message = "Invalid line number"
 
     def load_plugin_cmd(self, stdscr):
         if not self.plugin_manager:
@@ -1403,7 +1437,7 @@ class Editor:
         loaded = self.plugin_manager.list_loaded()
         self.message = f"Plugins: available={','.join(available)} loaded={','.join(loaded)}"
 
-    # ─── Отрисовка ────────────────────────────────────────
+    # ─── Rendering ────────────────────────────────────────
 
     def _color_for_token(self, kind):
         mapping = {
@@ -1459,7 +1493,7 @@ class Editor:
             if col + len(text) <= offset:
                 col += len(text)
                 continue
-            # часть токена попадает в видимую область
+            # part of token falls into visible area
             start = max(0, offset - col)
             end = min(len(text), offset + width - col)
             visible_text = text[start:end]
@@ -1475,12 +1509,12 @@ class Editor:
         if max_y < 3 or max_x < 10:
             return
 
-        line_num_width = 6   # ширина номера строки
-        gutter = 1           # пробел между номером и кодом
+        line_num_width = 6   # line number width
+        gutter = 1           # space between number and code
         code_x = line_num_width + gutter
         text_width = max_x - code_x
 
-        # корректировка прокрутки
+        # adjust scrolling
         if self.cursor_y < self.scroll_y:
             self.scroll_y = self.cursor_y
         elif self.cursor_y >= self.scroll_y + max_y - 1:
@@ -1494,7 +1528,7 @@ class Editor:
         highlighter = get_highlighter(self.filename)
 
         for i in range(max_y - 1):
-            # полностью очищаем строку перед отрисовкой
+            # completely clear line before rendering
             try:
                 stdscr.move(i, 0)
                 stdscr.clrtoeol()
@@ -1505,7 +1539,7 @@ class Editor:
             if line_idx >= len(self.lines):
                 continue
 
-            # номер строки (всегда рисуем для существующих строк)
+            # line number (always draw for existing lines)
             num_str = str(line_idx + 1).rjust(line_num_width)[:line_num_width]
             try:
                 stdscr.addstr(i, 0, num_str, curses.color_pair(2))
@@ -1525,10 +1559,10 @@ class Editor:
                 except curses.error:
                     pass
 
-        # статусная строка — табы + инфо
+        # status bar - tabs + info
         tab_line = " | ".join(f"[{i+1}] {b.title}" for i, b in enumerate(self.buffers))
         if len(tab_line) > max_x - 1:
-            # сокращаем если слишком длинно
+            # shorten if too long
             cur = self.buffers[self.buffer_idx]
             tab_line = f"[{self.buffer_idx+1}] {cur.title} ({len(self.buffers)} tabs)"
         status = (
@@ -1556,40 +1590,40 @@ class Editor:
         
         stdscr.refresh()
 
-    # ─── Главный цикл ─────────────────────────────────────
+    # ─── Main Loop ─────────────────────────────────────
 
     def run(self, stdscr):
         curses.curs_set(1)
         stdscr.keypad(True)
         curses.start_color()
         curses.use_default_colors()
-        # 1: статусная строка
+        # 1: status bar
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        # 2: номера строк
+        # 2: line numbers
         curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
-        # 3: ключевые слова
+        # 3: keywords
         curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
-        # 4: встроенные функции
+        # 4: built-in functions
         curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
         # 5: self
         curses.init_pair(5, curses.COLOR_BLUE, curses.COLOR_BLACK)
-        # 6: имена функций
+        # 6: function names
         curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-        # 7: имена классов
+        # 7: class names
         curses.init_pair(7, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-        # 8: строки
+        # 8: strings
         curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_BLACK)
-        # 9: числа
+        # 9: numbers
         curses.init_pair(9, curses.COLOR_CYAN, curses.COLOR_BLACK)
-        # 10: комментарии
+        # 10: comments
         curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
-        # 11: декораторы
+        # 11: decorators
         curses.init_pair(11, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
-        # 12: операторы
+        # 12: operators
         curses.init_pair(12, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        # 13: скобки
+        # 13: brackets
         curses.init_pair(13, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        # 14: переменные/подстановки
+        # 14: variables/substitutions
         curses.init_pair(14, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         
         while True:
@@ -1635,7 +1669,7 @@ class Editor:
             # hide completion on most keys
             if code not in (0, 259, 258, 260, 261, 338, 339, 262, 360):
                 self.completion_visible = False
-                # сброс повтора kill_line для non-control клавиш
+                # reset kill_line repeat for non-control keys
                 if code != 11:  # 11 = Ctrl+K
                     self._kill_line_repeat = False
 
@@ -1661,11 +1695,9 @@ class Editor:
                 self.switch_buffer(-1)
             elif code == curses.KEY_F2:  # F2 - next tab
                 self.switch_buffer(1)
-            # ── Файл ──
+            # ── File ──
             elif code == 19:  # Ctrl+S
                 self.save(stdscr)
-            elif code == 15:  # Ctrl+O
-                self.open_file(stdscr)
             elif code == 14:  # Ctrl+N
                 self.new_file()
             # ── Save As ──
@@ -1676,7 +1708,7 @@ class Editor:
                 self.undo()
             elif code == 25:  # Ctrl+Y
                 self.redo()
-            # ── Буфер обмена ──
+            # ── Clipboard ──
             elif code == 3:  # Ctrl+C
                 self.copy()
             elif code == 24:  # Ctrl+X
@@ -1704,12 +1736,12 @@ class Editor:
                 self.unload_plugin_cmd(stdscr)
             elif code == 16:  # Ctrl+P - list plugins
                 self.list_plugins_cmd(stdscr)
-            # ── Навигация / Поиск ──
+            # ── Navigation / Search ──
             elif code == 6:  # Ctrl+F
                 self.find(stdscr)
             elif code == 7:  # Ctrl+G
                 self.goto(stdscr)
-            # ── Спец. клавиши ──
+            # ─── Special keys ──
             elif code == 9:  # Tab
                 self.indent()
             elif code == 353:  # Shift+Tab (KEY_BTAB)
@@ -1759,7 +1791,7 @@ class Editor:
                 max_y, _ = stdscr.getmaxyx()
                 self.cursor_y = min(len(self.lines) - 1, self.cursor_y + (max_y - 2))
                 self.cursor_x = min(self.cursor_x, len(self.lines[self.cursor_y]))
-            # ── Печатные символы (включая Unicode) ──
+            # ── Printable characters (including Unicode) ──
             elif isinstance(key, str) and code >= 32 and code != 127:
                 self.insert_char(key)
 
