@@ -6,7 +6,6 @@
 
 > A lightweight console code editor for Windows and Linux. Combines Vim's minimalism with familiar Windows keyboard shortcuts.
 
-![WNim Editor](https://github.com/semenpro22gaempro-beep/Wnim/blob/main/Main/README.md?raw=true)
 
 ## 📑 Table of Contents
 
