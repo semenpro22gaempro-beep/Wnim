@@ -632,6 +632,504 @@ def get_highlighter(filename):
     return None
 
 
+# ─── Keyword dictionaries for autocomplete ─────────────────────────────
+
+KEYWORDS = {
+    ".py": {
+        "keywords": ["False", "None", "True", "and", "as", "assert", "async", "await",
+            "break", "class", "continue", "def", "del", "elif", "else", "except",
+            "finally", "for", "from", "global", "if", "import", "in", "is",
+            "lambda", "nonlocal", "not", "or", "pass", "raise", "return",
+            "try", "while", "with", "yield"],
+        "builtins": ["abs", "all", "any", "bin", "bool", "bytearray", "bytes", "callable",
+            "chr", "classmethod", "compile", "complex", "delattr", "dict", "dir",
+            "divmod", "enumerate", "eval", "exec", "filter", "float", "format",
+            "frozenset", "getattr", "globals", "hasattr", "hash", "help", "hex",
+            "id", "input", "int", "isinstance", "issubclass", "iter", "len",
+            "list", "locals", "map", "max", "memoryview", "min", "next", "object",
+            "oct", "open", "ord", "pow", "print", "property", "range", "repr",
+            "reversed", "round", "set", "setattr", "slice", "sorted", "staticmethod",
+            "str", "sum", "super", "tuple", "type", "vars", "zip", "__import__",
+            "open", "input", "len", "range", "print", "str", "int", "float", "bool", "list", "dict", "set", "tuple"]
+    },
+    ".js": {
+        "keywords": ["async", "await", "break", "case", "catch", "class", "const",
+            "continue", "debugger", "default", "delete", "do", "else",
+            "export", "extends", "false", "finally", "for", "function",
+            "if", "import", "in", "instanceof", "let", "new", "null",
+            "return", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield"],
+        "builtins": ["Array", "Boolean", "Date", "Error", "Function", "JSON",
+            "Math", "Number", "Object", "Promise", "RegExp", "String",
+            "console", "document", "window", "alert", "setTimeout",
+            "setInterval", "clearTimeout", "clearInterval", "parseInt",
+            "parseFloat", "isNaN", "eval"]
+    },
+    ".jsx": {
+        "keywords": ["async", "await", "break", "case", "catch", "class", "const",
+            "continue", "debugger", "default", "delete", "do", "else",
+            "export", "extends", "false", "finally", "for", "function",
+            "if", "import", "in", "instanceof", "let", "new", "null",
+            "return", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield"],
+        "builtins": ["Array", "Boolean", "Date", "Error", "Function", "JSON",
+            "Math", "Number", "Object", "Promise", "RegExp", "String",
+            "console", "document", "window", "alert", "setTimeout",
+            "setInterval", "clearTimeout", "clearInterval", "parseInt",
+            "parseFloat", "isNaN", "eval"]
+    },
+    ".ts": {
+        "keywords": ["async", "await", "break", "case", "catch", "class", "const",
+            "continue", "debugger", "default", "delete", "do", "else",
+            "enum", "export", "extends", "false", "finally", "for", "function",
+            "if", "import", "in", "instanceof", "interface", "let", "new", "null",
+            "return", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield",
+            "readonly", "abstract", "implements", "type", "namespace", "module"],
+        "builtins": ["Array", "Boolean", "Date", "Error", "Function", "JSON",
+            "Math", "Number", "Object", "Promise", "RegExp", "String",
+            "console", "document", "window", "alert", "setTimeout",
+            "setInterval", "Map", "Set", "WeakMap", "WeakSet", "Proxy", "Reflect"]
+    },
+    ".tsx": {
+        "keywords": ["async", "await", "break", "case", "catch", "class", "const",
+            "continue", "debugger", "default", "delete", "do", "else",
+            "enum", "export", "extends", "false", "finally", "for", "function",
+            "if", "import", "in", "instanceof", "interface", "let", "new", "null",
+            "return", "super", "switch", "this", "throw", "true", "try",
+            "typeof", "undefined", "var", "void", "while", "with", "yield",
+            "readonly", "abstract", "implements", "type", "namespace", "module"],
+        "builtins": ["Array", "Boolean", "Date", "Error", "Function", "JSON",
+            "Math", "Number", "Object", "Promise", "RegExp", "String",
+            "console", "document", "window", "alert", "setTimeout",
+            "setInterval", "Map", "Set", "WeakMap", "WeakSet", "Proxy", "Reflect"]
+    },
+    ".c": {
+        "keywords": ["auto", "break", "case", "char", "const", "continue", "default",
+            "do", "double", "else", "enum", "extern", "float", "for", "goto",
+            "if", "int", "long", "register", "return", "short", "signed",
+            "sizeof", "static", "struct", "switch", "typedef", "union",
+            "unsigned", "void", "volatile", "while"],
+        "builtins": ["printf", "scanf", "malloc", "free", "memcpy", "memset",
+            "strlen", "strcpy", "strcmp", "fopen", "fclose", "fread",
+            "fwrite", "fprintf", "sprintf", "exit", "atoi", "atof", "NULL", "EOF"]
+    },
+    ".h": {
+        "keywords": ["auto", "break", "case", "char", "const", "continue", "default",
+            "do", "double", "else", "enum", "extern", "float", "for", "goto",
+            "if", "int", "long", "register", "return", "short", "signed",
+            "sizeof", "static", "struct", "switch", "typedef", "union",
+            "unsigned", "void", "volatile", "while"],
+        "builtins": ["printf", "scanf", "malloc", "free", "memcpy", "memset",
+            "strlen", "strcpy", "strcmp", "fopen", "fclose", "fread",
+            "fwrite", "fprintf", "sprintf", "exit", "atoi", "atof", "NULL", "EOF"]
+    },
+    ".cpp": {
+        "keywords": ["alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand",
+            "bitor", "bool", "break", "case", "catch", "char", "char8_t",
+            "char16_t", "char32_t", "class", "compl", "concept", "const",
+            "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default",
+            "delete", "do", "double", "dynamic_cast", "else", "enum",
+            "explicit", "export", "extern", "false", "float", "for",
+            "friend", "goto", "if", "inline", "int", "long", "mutable",
+            "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+            "operator", "or", "or_eq", "private", "protected", "public",
+            "register", "reinterpret_cast", "requires", "return", "short",
+            "signed", "sizeof", "static", "static_assert", "static_cast",
+            "struct", "switch", "template", "this", "thread_local", "throw",
+            "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+            "while", "xor", "xor_eq"],
+        "builtins": ["std", "cout", "cin", "cerr", "endl", "string", "vector",
+            "map", "set", "queue", "stack", "array", "tuple", "pair",
+            "make_shared", "make_unique", "shared_ptr", "unique_ptr", "nullptr", "NULL"]
+    },
+    ".cc": {
+        "keywords": ["alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand",
+            "bitor", "bool", "break", "case", "catch", "char", "char8_t",
+            "char16_t", "char32_t", "class", "compl", "concept", "const",
+            "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default",
+            "delete", "do", "double", "dynamic_cast", "else", "enum",
+            "explicit", "export", "extern", "false", "float", "for",
+            "friend", "goto", "if", "inline", "int", "long", "mutable",
+            "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+            "operator", "or", "or_eq", "private", "protected", "public",
+            "register", "reinterpret_cast", "requires", "return", "short",
+            "signed", "sizeof", "static", "static_assert", "static_cast",
+            "struct", "switch", "template", "this", "thread_local", "throw",
+            "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+            "while", "xor", "xor_eq"],
+        "builtins": ["std", "cout", "cin", "cerr", "endl", "string", "vector",
+            "map", "set", "queue", "stack", "array", "tuple", "pair",
+            "make_shared", "make_unique", "shared_ptr", "unique_ptr", "nullptr", "NULL"]
+    },
+    ".cxx": {
+        "keywords": ["alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand",
+            "bitor", "bool", "break", "case", "catch", "char", "char8_t",
+            "char16_t", "char32_t", "class", "compl", "concept", "const",
+            "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default",
+            "delete", "do", "double", "dynamic_cast", "else", "enum",
+            "explicit", "export", "extern", "false", "float", "for",
+            "friend", "goto", "if", "inline", "int", "long", "mutable",
+            "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+            "operator", "or", "or_eq", "private", "protected", "public",
+            "register", "reinterpret_cast", "requires", "return", "short",
+            "signed", "sizeof", "static", "static_assert", "static_cast",
+            "struct", "switch", "template", "this", "thread_local", "throw",
+            "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+            "while", "xor", "xor_eq"],
+        "builtins": ["std", "cout", "cin", "cerr", "endl", "string", "vector",
+            "map", "set", "queue", "stack", "array", "tuple", "pair",
+            "make_shared", "make_unique", "shared_ptr", "unique_ptr", "nullptr", "NULL"]
+    },
+    ".hpp": {
+        "keywords": ["alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand",
+            "bitor", "bool", "break", "case", "catch", "char", "char8_t",
+            "char16_t", "char32_t", "class", "compl", "concept", "const",
+            "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default",
+            "delete", "do", "double", "dynamic_cast", "else", "enum",
+            "explicit", "export", "extern", "false", "float", "for",
+            "friend", "goto", "if", "inline", "int", "long", "mutable",
+            "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+            "operator", "or", "or_eq", "private", "protected", "public",
+            "register", "reinterpret_cast", "requires", "return", "short",
+            "signed", "sizeof", "static", "static_assert", "static_cast",
+            "struct", "switch", "template", "this", "thread_local", "throw",
+            "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+            "while", "xor", "xor_eq"],
+        "builtins": ["std", "cout", "cin", "cerr", "endl", "string", "vector",
+            "map", "set", "queue", "stack", "array", "tuple", "pair",
+            "make_shared", "make_unique", "shared_ptr", "unique_ptr", "nullptr", "NULL"]
+    },
+    ".hh": {
+        "keywords": ["alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand",
+            "bitor", "bool", "break", "case", "catch", "char", "char8_t",
+            "char16_t", "char32_t", "class", "compl", "concept", "const",
+            "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default",
+            "delete", "do", "double", "dynamic_cast", "else", "enum",
+            "explicit", "export", "extern", "false", "float", "for",
+            "friend", "goto", "if", "inline", "int", "long", "mutable",
+            "namespace", "new", "noexcept", "not", "not_eq", "nullptr",
+            "operator", "or", "or_eq", "private", "protected", "public",
+            "register", "reinterpret_cast", "requires", "return", "short",
+            "signed", "sizeof", "static", "static_assert", "static_cast",
+            "struct", "switch", "template", "this", "thread_local", "throw",
+            "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+            "while", "xor", "xor_eq"],
+        "builtins": ["std", "cout", "cin", "cerr", "endl", "string", "vector",
+            "map", "set", "queue", "stack", "array", "tuple", "pair",
+            "make_shared", "make_unique", "shared_ptr", "unique_ptr", "nullptr", "NULL"]
+    },
+    ".cs": {
+        "keywords": ["abstract", "as", "base", "bool", "break", "byte", "case",
+            "catch", "char", "checked", "class", "const", "continue",
+            "decimal", "default", "delegate", "do", "double", "else",
+            "enum", "event", "explicit", "extern", "false", "finally",
+            "fixed", "float", "for", "foreach", "goto", "if", "implicit",
+            "in", "int", "interface", "internal", "is", "lock", "long",
+            "namespace", "new", "null", "object", "operator", "out",
+            "override", "params", "private", "protected", "public",
+            "readonly", "ref", "return", "sbyte", "sealed", "short",
+            "sizeof", "stackalloc", "static", "string", "struct", "switch",
+            "this", "throw", "true", "try", "typeof", "uint", "ulong",
+            "unchecked", "unsafe", "ushort", "using", "virtual", "void",
+            "volatile", "while", "async", "await"],
+        "builtins": ["Console", "String", "Int32", "Convert", "Math", "Array",
+            "List", "Dictionary", "Enumerable", "Task", "DateTime", "Guid",
+            "Exception", "Environment", "File", "Directory", "Path", "Debug"]
+    },
+    ".java": {
+        "keywords": ["abstract", "assert", "boolean", "break", "byte", "case",
+            "catch", "char", "class", "const", "continue", "default",
+            "do", "double", "else", "enum", "extends", "final", "finally",
+            "float", "for", "goto", "if", "implements", "import", "instanceof",
+            "int", "interface", "long", "native", "new", "package", "private",
+            "protected", "public", "return", "short", "static", "strictfp",
+            "super", "switch", "synchronized", "this", "throw", "throws",
+            "transient", "try", "void", "volatile", "while"],
+        "builtins": ["System", "Object", "String", "Integer", "Long", "Double",
+            "Float", "Boolean", "Character", "Byte", "Short", "Number", "Class",
+            "Math", "Thread", "Runnable", "Exception", "ArrayList", "LinkedList",
+            "HashMap", "HashSet", "Collections", "Arrays", "Optional", "Stream"]
+    },
+    ".go": {
+        "keywords": ["break", "case", "chan", "const", "continue", "default", "defer",
+            "else", "fallthrough", "for", "func", "go", "goto", "if",
+            "import", "interface", "map", "package", "range", "return",
+            "select", "struct", "switch", "type", "var"],
+        "builtins": ["append", "cap", "close", "complex", "copy", "delete", "imag",
+            "len", "make", "new", "panic", "print", "println", "real", "recover",
+            "bool", "byte", "complex64", "complex128", "error", "float32",
+            "float64", "int", "int8", "int16", "int32", "int64", "rune", "string"]
+    },
+    ".rs": {
+        "keywords": ["as", "async", "await", "break", "const", "continue", "crate",
+            "dyn", "else", "enum", "extern", "false", "fn", "for", "if",
+            "impl", "in", "let", "loop", "match", "mod", "move", "mut",
+            "pub", "ref", "return", "self", "Self", "static", "struct",
+            "super", "trait", "true", "type", "unsafe", "use", "where",
+            "while", "try", "union"],
+        "builtins": ["Option", "Some", "None", "Result", "Ok", "Err", "Vec", "String",
+            "Box", "Rc", "Arc", "println", "print", "eprintln", "vec", "panic", "assert"]
+    },
+    ".php": {
+        "keywords": ["abstract", "and", "array", "as", "break", "callable", "case",
+            "catch", "class", "clone", "const", "continue", "declare",
+            "default", "die", "do", "echo", "else", "elseif", "empty",
+            "enddeclare", "endfor", "endforeach", "endif", "endswitch",
+            "endwhile", "eval", "exit", "extends", "final", "finally",
+            "fn", "for", "foreach", "function", "global", "goto", "if",
+            "implements", "include", "include_once", "instanceof",
+            "insteadof", "interface", "isset", "list", "match", "namespace",
+            "new", "or", "print", "private", "protected", "public",
+            "require", "require_once", "return", "static", "switch",
+            "throw", "trait", "try", "unset", "use", "var", "while", "yield"],
+        "builtins": ["strlen", "strpos", "substr", "str_replace", "explode", "implode",
+            "trim", "ltrim", "rtrim", "strtolower", "strtoupper", "preg_match",
+            "array_merge", "array_push", "array_pop", "count", "sort", "json_encode",
+            "json_decode", "file_get_contents", "file_put_contents", "date", "time"]
+    },
+    ".kt": {
+        "keywords": ["abstract", "actual", "annotation", "as", "break", "by", "catch",
+            "class", "companion", "const", "constructor", "continue", "crossinline",
+            "data", "delegate", "do", "dynamic", "else", "enum", "expect",
+            "external", "false", "field", "file", "final", "finally", "for",
+            "fun", "get", "if", "import", "in", "infix", "init", "inline",
+            "inner", "interface", "internal", "is", "lateinit", "noinline",
+            "null", "object", "open", "operator", "out", "override", "package",
+            "param", "private", "property", "protected", "public", "receiver",
+            "reified", "return", "sealed", "set", "setparam", "super", "suspend",
+            "tailrec", "this", "throw", "true", "try", "typealias", "typeof",
+            "val", "var", "vararg", "when", "where", "while"],
+        "builtins": ["println", "print", "readLine", "readln", "Array", "List",
+            "MutableList", "Set", "MutableSet", "Map", "MutableMap", "String",
+            "Int", "Long", "Short", "Byte", "Float", "Double", "Boolean", "Char",
+            "Unit", "Nothing", "Any", "listOf", "mutableListOf", "setOf", "mapOf"]
+    },
+    ".kts": {
+        "keywords": ["abstract", "actual", "annotation", "as", "break", "by", "catch",
+            "class", "companion", "const", "constructor", "continue", "crossinline",
+            "data", "delegate", "do", "dynamic", "else", "enum", "expect",
+            "external", "false", "field", "file", "final", "finally", "for",
+            "fun", "get", "if", "import", "in", "infix", "init", "inline",
+            "inner", "interface", "internal", "is", "lateinit", "noinline",
+            "null", "object", "open", "operator", "out", "override", "package",
+            "param", "private", "property", "protected", "public", "receiver",
+            "reified", "return", "sealed", "set", "setparam", "super", "suspend",
+            "tailrec", "this", "throw", "true", "try", "typealias", "typeof",
+            "val", "var", "vararg", "when", "where", "while"],
+        "builtins": ["println", "print", "readLine", "readln", "Array", "List",
+            "MutableList", "Set", "MutableSet", "Map", "MutableMap", "String",
+            "Int", "Long", "Short", "Byte", "Float", "Double", "Boolean", "Char",
+            "Unit", "Nothing", "Any", "listOf", "mutableListOf", "setOf", "mapOf"]
+    },
+    ".rb": {
+        "keywords": ["BEGIN", "END", "alias", "and", "begin", "break", "case", "class",
+            "def", "defined?", "do", "else", "elsif", "end", "ensure", "false",
+            "for", "if", "in", "module", "next", "nil", "not", "or", "redo",
+            "rescue", "retry", "return", "self", "super", "then", "true",
+            "undef", "unless", "until", "when", "while", "yield"],
+        "builtins": ["puts", "print", "printf", "warn", "raise", "require", "load",
+            "include", "extend", "attr_reader", "attr_writer", "attr_accessor",
+            "initialize", "new", "class", "module", "def", "super", "yield"]
+    },
+    ".erb": {
+        "keywords": ["BEGIN", "END", "alias", "and", "begin", "break", "case", "class",
+            "def", "defined?", "do", "else", "elsif", "end", "ensure", "false",
+            "for", "if", "in", "module", "next", "nil", "not", "or", "redo",
+            "rescue", "retry", "return", "self", "super", "then", "true",
+            "undef", "unless", "until", "when", "while", "yield"],
+        "builtins": ["puts", "print", "printf", "warn", "raise", "require", "load",
+            "include", "extend", "attr_reader", "attr_writer", "attr_accessor",
+            "initialize", "new", "class", "module", "def", "super", "yield"]
+    },
+    ".lua": {
+        "keywords": ["and", "break", "do", "else", "elseif", "end", "false", "for",
+            "function", "goto", "if", "in", "local", "nil", "not", "or",
+            "repeat", "return", "then", "true", "until", "while"],
+        "builtins": ["print", "type", "tonumber", "tostring", "select", "ipairs",
+            "pairs", "next", "pcall", "xpcall", "error", "assert", "load",
+            "rawget", "rawset", "require", "module", "setmetatable", "getmetatable",
+            "collectgarbage", "dofile", "loadfile", "coroutine", "string", "table",
+            "math", "io", "os", "debug"]
+    },
+    ".ps1": {
+        "keywords": ["if", "then", "else", "elseif", "switch", "for", "foreach",
+            "while", "do", "until", "break", "continue", "return", "exit",
+            "try", "catch", "finally", "throw", "trap", "param", "begin",
+            "process", "end", "in", "function", "filter", "class", "enum",
+            "workflow", "configuration", "dynamicparam", "data", "var"],
+        "builtins": ["Write-Host", "Write-Output", "Write-Verbose", "Write-Warning",
+            "Write-Error", "Get-Command", "Get-Help", "Get-Process", "Get-Service",
+            "Set-Location", "Get-ChildItem", "Copy-Item", "Move-Item", "Remove-Item",
+            "New-Item", "Test-Path", "Select-String", "Select-Object", "Where-Object"]
+    },
+    ".psm1": {
+        "keywords": ["if", "then", "else", "elseif", "switch", "for", "foreach",
+            "while", "do", "until", "break", "continue", "return", "exit",
+            "try", "catch", "finally", "throw", "trap", "param", "begin",
+            "process", "end", "in", "function", "filter", "class", "enum",
+            "workflow", "configuration", "dynamicparam", "data", "var"],
+        "builtins": ["Write-Host", "Write-Output", "Write-Verbose", "Write-Warning",
+            "Write-Error", "Get-Command", "Get-Help", "Get-Process", "Get-Service",
+            "Set-Location", "Get-ChildItem", "Copy-Item", "Move-Item", "Remove-Item",
+            "New-Item", "Test-Path", "Select-String", "Select-Object", "Where-Object"]
+    },
+    ".psd1": {
+        "keywords": ["if", "then", "else", "elseif", "switch", "for", "foreach",
+            "while", "do", "until", "break", "continue", "return", "exit",
+            "try", "catch", "finally", "throw", "trap", "param", "begin",
+            "process", "end", "in", "function", "filter", "class", "enum",
+            "workflow", "configuration", "dynamicparam", "data", "var"],
+        "builtins": ["Write-Host", "Write-Output", "Write-Verbose", "Write-Warning",
+            "Write-Error", "Get-Command", "Get-Help", "Get-Process", "Get-Service",
+            "Set-Location", "Get-ChildItem", "Copy-Item", "Move-Item", "Remove-Item",
+            "New-Item", "Test-Path", "Select-String", "Select-Object", "Where-Object"]
+    },
+    ".sh": {
+        "keywords": ["if", "then", "else", "elif", "fi", "case", "esac", "for",
+            "while", "until", "do", "done", "in", "function", "return",
+            "break", "continue", "shift", "exit", "export", "local",
+            "readonly", "unset", "declare", "source", "alias"],
+        "builtins": ["echo", "printf", "read", "cd", "pwd", "ls", "cat", "grep",
+            "sed", "awk", "cut", "sort", "uniq", "head", "tail", "find",
+            "chmod", "chown", "mkdir", "rm", "cp", "mv", "ln", "touch", "test",
+            "true", "false", "sleep", "wait", "kill", "trap", "exec", "eval"]
+    },
+    ".bash": {
+        "keywords": ["if", "then", "else", "elif", "fi", "case", "esac", "for",
+            "while", "until", "do", "done", "in", "function", "return",
+            "break", "continue", "shift", "exit", "export", "local",
+            "readonly", "unset", "declare", "source", "alias"],
+        "builtins": ["echo", "printf", "read", "cd", "pwd", "ls", "cat", "grep",
+            "sed", "awk", "cut", "sort", "uniq", "head", "tail", "find",
+            "chmod", "chown", "mkdir", "rm", "cp", "mv", "ln", "touch", "test",
+            "true", "false", "sleep", "wait", "kill", "trap", "exec", "eval"]
+    },
+    ".zsh": {
+        "keywords": ["if", "then", "else", "elif", "fi", "case", "esac", "for",
+            "while", "until", "do", "done", "in", "function", "return",
+            "break", "continue", "shift", "exit", "export", "local",
+            "readonly", "unset", "declare", "source", "alias"],
+        "builtins": ["echo", "printf", "read", "cd", "pwd", "ls", "cat", "grep",
+            "sed", "awk", "cut", "sort", "uniq", "head", "tail", "find",
+            "chmod", "chown", "mkdir", "rm", "cp", "mv", "ln", "touch", "test",
+            "true", "false", "sleep", "wait", "kill", "trap", "exec", "eval"]
+    },
+    ".zig": {
+        "keywords": ["align", "and", "asm", "async", "await", "break", "catch",
+            "comptime", "const", "continue", "defer", "else", "enum", "errdefer",
+            "error", "export", "extern", "fn", "for", "if", "inline", "noalias",
+            "nosuspend", "opaque", "or", "orelse", "pack", "pub", "resume",
+            "return", "linksection", "struct", "suspend", "switch", "test",
+            "threadlocal", "try", "union", "unreachable", "usingnamespace",
+            "var", "volatile", "while"],
+        "builtins": ["i8", "i16", "i32", "i64", "i128", "u8", "u16", "u32", "u64",
+            "u128", "f16", "f32", "f64", "f80", "f128", "bool", "void", "noreturn",
+            "type", "anyerror", "anyframe", "isize", "usize", "c_short", "c_int",
+            "c_long", "c_longlong", "c_float", "c_double", "c_void", "std", "print",
+            "debug", "warn", "err", "alloc", "malloc", "free", "memcpy", "memset"]
+    },
+    ".asm": {
+        "keywords": ["mov", "add", "sub", "mul", "div", "imul", "idiv", "and", "or",
+            "xor", "not", "neg", "inc", "dec", "cmp", "test", "jmp", "je", "jne",
+            "jz", "jnz", "jg", "jl", "jge", "jle", "ja", "jb", "jae", "jbe",
+            "call", "ret", "push", "pop", "lea", "nop", "hlt", "int", "cli", "sti"],
+        "builtins": ["eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", "eip",
+            "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "rip",
+            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "al", "ah",
+            "bl", "bh", "cl", "ch", "dl", "dh", "ax", "bx", "cx", "dx"]
+    },
+    ".s": {
+        "keywords": ["mov", "add", "sub", "mul", "div", "imul", "idiv", "and", "or",
+            "xor", "not", "neg", "inc", "dec", "cmp", "test", "jmp", "je", "jne",
+            "jz", "jnz", "jg", "jl", "jge", "jle", "ja", "jb", "jae", "jbe",
+            "call", "ret", "push", "pop", "lea", "nop", "hlt", "int", "cli", "sti"],
+        "builtins": ["eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", "eip",
+            "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "rip",
+            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "al", "ah",
+            "bl", "bh", "cl", "ch", "dl", "dh", "ax", "bx", "cx", "dx"]
+    },
+    ".S": {
+        "keywords": ["mov", "add", "sub", "mul", "div", "imul", "idiv", "and", "or",
+            "xor", "not", "neg", "inc", "dec", "cmp", "test", "jmp", "je", "jne",
+            "jz", "jnz", "jg", "jl", "jge", "jle", "ja", "jb", "jae", "jbe",
+            "call", "ret", "push", "pop", "lea", "nop", "hlt", "int", "cli", "sti"],
+        "builtins": ["eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", "eip",
+            "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "rip",
+            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "al", "ah",
+            "bl", "bh", "cl", "ch", "dl", "dh", "ax", "bx", "cx", "dx"]
+    },
+    ".html": {
+        "keywords": ["html", "head", "body", "div", "span", "p", "a", "img", "ul",
+            "ol", "li", "table", "tr", "td", "th", "thead", "tbody", "tfoot",
+            "form", "input", "button", "select", "option", "textarea", "label",
+            "fieldset", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "br", "hr",
+            "pre", "code", "blockquote", "q", "cite", "abbr", "address", "b", "i",
+            "u", "s", "strong", "em", "mark", "small", "del", "ins", "sub", "sup",
+            "time", "nav", "header", "footer", "main", "section", "article", "aside"],
+        "builtins": []
+    },
+    ".htm": {
+        "keywords": ["html", "head", "body", "div", "span", "p", "a", "img", "ul",
+            "ol", "li", "table", "tr", "td", "th", "thead", "tbody", "tfoot",
+            "form", "input", "button", "select", "option", "textarea", "label",
+            "fieldset", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "br", "hr",
+            "pre", "code", "blockquote", "q", "cite", "abbr", "address", "b", "i",
+            "u", "s", "strong", "em", "mark", "small", "del", "ins", "sub", "sup",
+            "time", "nav", "header", "footer", "main", "section", "article", "aside"],
+        "builtins": []
+    },
+    ".xhtml": {
+        "keywords": ["html", "head", "body", "div", "span", "p", "a", "img", "ul",
+            "ol", "li", "table", "tr", "td", "th", "thead", "tbody", "tfoot",
+            "form", "input", "button", "select", "option", "textarea", "label",
+            "fieldset", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "br", "hr",
+            "pre", "code", "blockquote", "q", "cite", "abbr", "address", "b", "i",
+            "u", "s", "strong", "em", "mark", "small", "del", "ins", "sub", "sup",
+            "time", "nav", "header", "footer", "main", "section", "article", "aside"],
+        "builtins": []
+    },
+    ".css": {
+        "keywords": ["display", "position", "top", "right", "bottom", "left",
+            "z-index", "width", "height", "min-width", "max-width", "min-height",
+            "max-height", "padding", "margin", "border", "border-width",
+            "border-style", "border-color", "border-radius", "background",
+            "background-color", "background-image", "background-position",
+            "background-size", "color", "font", "font-family", "font-size",
+            "font-weight", "font-style", "line-height", "text-align",
+            "text-decoration", "text-transform", "letter-spacing",
+            "word-spacing", "white-space", "visibility", "opacity", "overflow",
+            "float", "clear", "flex", "flex-direction", "flex-wrap",
+            "justify-content", "align-items", "align-content", "grid",
+            "grid-template-columns", "grid-template-rows", "gap", "transform",
+            "transition", "animation", "box-shadow", "text-shadow", "cursor"],
+        "builtins": []
+    }
+}
+
+
+def get_language_keywords(filename):
+    """Get keywords and builtins for a given filename extension."""
+    if not filename:
+        return [], []
+    ext = os.path.splitext(filename)[1].lower()
+    if ext in KEYWORDS:
+        kw = KEYWORDS[ext].get("keywords", [])
+        bi = KEYWORDS[ext].get("builtins", [])
+        return sorted(set(kw + bi)), []
+    return [], []
+
+
 class Buffer:
     """One open file/tab."""
     def __init__(self, filename=None):
@@ -682,6 +1180,13 @@ class Editor:
         self.plugin_manager = None
         if HAS_PLUGINS and PluginManager:
             self.plugin_manager = PluginManager(self)
+
+        # Auto-complete timer (1 second delay for auto-suggestion)
+        self._last_activity_time = 0
+        self._auto_complete_delay = 1.0  # seconds (reduced from 5.0)
+        self._pending_completion = False
+        self._completion_prefix = ""
+        self._completion_start_x = 0
 
         # Multi-buffer support
         self.buffers = []
@@ -1255,77 +1760,213 @@ class Editor:
         return line[start:x], start
 
     def _collect_words(self):
+        """Collect all words from current file."""
         words = set()
         for line in self.lines:
             for m in re.finditer(r"[a-zA-Z_]\w*", line):
                 words.add(m.group())
-        return sorted(words)
+        return words
+
+    def _get_all_completions(self, prefix):
+        """Get all possible completions for prefix (keywords + file words)."""
+        if not prefix or len(prefix) < 1:
+            return []
+        
+        # Get language keywords and builtins
+        lang_keywords, _ = get_language_keywords(self.filename)
+        
+        # Collect words from current file
+        file_words = self._collect_words()
+        
+        # Combine and filter
+        all_words = set(lang_keywords) | file_words
+        matches = [w for w in all_words if w.startswith(prefix) and w != prefix]
+        
+        # Sort: file words first (alphabetically), then keywords
+        file_word_set = set(file_words)
+        keyword_set = set(lang_keywords)
+        
+        file_matches = sorted([w for w in matches if w in file_word_set])
+        keyword_matches = sorted([w for w in matches if w in keyword_set and w not in file_word_set])
+        
+        return file_matches + keyword_matches
+
+    def _update_auto_complete(self, stdscr):
+        """Check if auto-complete should be shown after delay."""
+        import time
+        current_time = time.time()
+        
+        # Only trigger if:
+        # 1. Completion not already visible
+        # 2. We have a valid prefix (at least 2 chars)
+        # 3. 5 seconds have passed since last activity
+        if self.completion_visible:
+            return
+        
+        if not self._pending_completion:
+            return
+        
+        if current_time - self._last_activity_time < self._auto_complete_delay:
+            return
+        
+        # Show auto-complete
+        prefix = self._completion_prefix
+        if len(prefix) < 2:
+            self._pending_completion = False
+            return
+        
+        matches = self._get_all_completions(prefix)
+        
+        if matches:
+            self.completions = matches[:20]  # Limit to 20 suggestions
+            self.completion_idx = 0
+            self.completion_visible = True
+            self._pending_completion = False
+            self._draw_completion_popup(stdscr)
+
+    def _reset_auto_complete_timer(self):
+        """Reset the auto-complete timer on user activity."""
+        import time
+        self._last_activity_time = time.time()
+        self._pending_completion = False
+        self._completion_prefix = ""
+
+    def _check_and_start_auto_complete(self):
+        """Check if we should start tracking for auto-complete."""
+        prefix, start_x = self._get_word_prefix()
+        if len(prefix) >= 2:
+            self._pending_completion = True
+            self._completion_prefix = prefix
+            self._completion_start_x = start_x
+        else:
+            self._pending_completion = False
+
+    def _update_completion_suggestions(self, stdscr):
+        """Update completion suggestions immediately (for responsive UX)."""
+        if not self._pending_completion:
+            return
+        
+        prefix = self._completion_prefix
+        if len(prefix) < 2:
+            return
+        
+        # If cursor moved away from the word, stop tracking
+        current_prefix, _ = self._get_word_prefix()
+        if current_prefix != prefix:
+            self._pending_completion = False
+            self.completion_visible = False
+            self.completions = []
+            return
+        
+        # Only show if completion not already visible or prefix changed
+        if self.completion_visible:
+            # Update existing suggestions if prefix changed
+            if self._completion_prefix != prefix:
+                matches = self._get_all_completions(prefix)
+                if matches:
+                    self.completions = matches[:20]
+                    self.completion_idx = 0
+                    self._draw_completion_popup(stdscr)
+            return
+        
+        # Show new suggestions
+        matches = self._get_all_completions(prefix)
+        if matches:
+            self.completions = matches[:20]
+            self.completion_idx = 0
+            self.completion_visible = True
+            self._draw_completion_popup(stdscr)
 
     def show_completions(self, stdscr):
+        """Show completions for current word prefix (manual trigger)."""
         prefix, start_x = self._get_word_prefix()
-        all_words = self._collect_words()
-        if prefix:
-            matches = [w for w in all_words if w.startswith(prefix) and w != prefix]
-        else:
-            matches = []
+        matches = self._get_all_completions(prefix)
+        
         if not matches:
             self.message = "No completions"
             self.completion_visible = False
             return
-        self.completions = matches
+        
+        self.completions = matches[:20]
         self.completion_idx = 0
         self.completion_visible = True
+        self._draw_completion_popup(stdscr)
+
+    def _draw_completion_popup(self, stdscr):
+        """Draw the autocomplete popup menu."""
+        if not self.completions:
+            return
+            
         max_y, max_x = stdscr.getmaxyx()
         line_num_width = 6
         gutter = 1
         code_x = line_num_width + gutter
-        # draw popup
+        
+        # Calculate popup position
         popup_y = self.cursor_y - self.scroll_y + 1
         popup_x = code_x + (self.cursor_x - self.scroll_x)
+        
         # Protection against going out of screen bounds
         if popup_x < 0:
             popup_x = 0
-        if popup_x >= max_x - 1:
-            popup_x = max_x - 10
+        if popup_x >= max_x - 15:
+            popup_x = max_x - 15
             if popup_x < 0:
                 popup_x = 0
-        popup_h = min(len(matches), 8)
-        popup_w = min(max(len(w) for w in matches) + 2, max_x - popup_x) if matches else 10
-        if popup_y + popup_h >= max_y - 1:
-            popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
+        
+        popup_h = min(len(self.completions), 8)
+        popup_w = min(max(len(w) for w in self.completions) + 4, max_x - popup_x - 2) if self.completions else 10
+        if popup_h < 1:
+            popup_h = 1
+        
+        # Adjust position if popup goes below screen
+        if popup_y + popup_h >= max_y - 2:
+            popup_y = max(0, self.cursor_y - self.scroll_y - popup_h - 1)
         if popup_y < 0:
             popup_y = 0
-        for i, word in enumerate(matches[:popup_h]):
-            attr = curses.A_REVERSE if i == 0 else 0
-            try:
-                stdscr.addstr(popup_y + i, popup_x, word[:popup_w].ljust(popup_w), attr)
-            except curses.error:
-                pass
+        
+        # Draw popup border
+        try:
+            # Top border
+            stdscr.addstr(popup_y, popup_x, "┌" + "─" * (popup_w - 2) + "┐")
+            
+            # Completion items
+            for i in range(popup_h):
+                if i < len(self.completions):
+                    word = self.completions[i]
+                    display = word[:popup_w - 3]
+                    if i == self.completion_idx:
+                        attr = curses.A_REVERSE | curses.A_BOLD
+                        try:
+                            stdscr.addstr(popup_y + 1 + i, popup_x + 1, display.ljust(popup_w - 2), attr)
+                        except curses.error:
+                            pass
+                    else:
+                        try:
+                            stdscr.addstr(popup_y + 1 + i, popup_x + 1, display.ljust(popup_w - 2))
+                        except curses.error:
+                            pass
+            
+            # Bottom border
+            stdscr.addstr(popup_y + popup_h + 1, popup_x, "└" + "─" * (popup_w - 2) + "┘")
+            
+            # Helper text
+            help_text = "↑↓ select, Enter accept, Esc close"
+            if len(help_text) < popup_w - 2:
+                try:
+                    stdscr.addstr(popup_y + popup_h + 1, popup_x + 1, help_text[:popup_w - 3])
+                except curses.error:
+                    pass
+        except curses.error:
+            pass
+        
         stdscr.refresh()
 
     def cycle_completion(self, stdscr, direction=1):
         if not self.completion_visible or not self.completions:
             return
         self.completion_idx = (self.completion_idx + direction) % len(self.completions)
-        # redraw
-        self.draw(stdscr)
-        max_y, max_x = stdscr.getmaxyx()
-        line_num_width = 6
-        gutter = 1
-        code_x = line_num_width + gutter
-        popup_y = self.cursor_y - self.scroll_y + 1
-        popup_x = code_x + (self.cursor_x - self.scroll_x)
-        popup_h = min(len(self.completions), 8)
-        popup_w = min(max(len(w) for w in self.completions) + 2, max_x - popup_x)
-        if popup_y + popup_h >= max_y - 1:
-            popup_y = max(0, self.cursor_y - self.scroll_y - popup_h)
-        for i, word in enumerate(self.completions[:popup_h]):
-            attr = curses.A_REVERSE if i == self.completion_idx else 0
-            try:
-                stdscr.addstr(popup_y + i, popup_x, word[:popup_w].ljust(popup_w), attr)
-            except curses.error:
-                pass
-        stdscr.refresh()
+        self._draw_completion_popup(stdscr)
 
     def accept_completion(self):
         if not self.completion_visible or not self.completions:
@@ -1593,6 +2234,7 @@ class Editor:
     # ─── Main Loop ─────────────────────────────────────
 
     def run(self, stdscr):
+        import time
         curses.curs_set(1)
         stdscr.keypad(True)
         curses.start_color()
@@ -1626,13 +2268,30 @@ class Editor:
         # 14: variables/substitutions
         curses.init_pair(14, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         
+        # Initialize last activity time
+        self._last_activity_time = time.time()
+        
         while True:
             self.draw(stdscr)
+            
+            # Draw completion popup if visible
+            if self.completion_visible:
+                self._draw_completion_popup(stdscr)
+            
+            # Non-blocking input with timeout for auto-complete
+            # Wait up to 100ms for input, then check auto-complete
+            stdscr.timeout(100)
             try:
                 key = stdscr.get_wch()
             except (curses.error, KeyboardInterrupt):
+                stdscr.nodelay(False)  # Block again
+                # Check for auto-complete even on timeout
+                self._update_auto_complete(stdscr)
                 continue
-
+            
+            # Reset timeout to blocking after first keypress
+            stdscr.timeout(-1)
+            
             if isinstance(key, str):
                 code = ord(key)
             else:
@@ -1666,8 +2325,27 @@ class Editor:
                 self.file_menu_visible = False
                 continue
 
-            # hide completion on most keys
-            if code not in (0, 259, 258, 260, 261, 338, 339, 262, 360):
+            # Autocomplete navigation when visible
+            if self.completion_visible:
+                if code == curses.KEY_UP:
+                    self.cycle_completion(stdscr, -1)
+                    continue
+                elif code == curses.KEY_DOWN:
+                    self.cycle_completion(stdscr, 1)
+                    continue
+                elif code in (10, 13):  # Enter - accept completion
+                    self.accept_completion()
+                    continue
+                elif code == 9:  # Tab - accept completion
+                    self.accept_completion()
+                    continue
+                elif code == 27:  # Esc - already handled above
+                    continue
+                # Any other key closes completion and continues
+                self.completion_visible = False
+
+            # hide completion on most keys (except navigation)
+            if code not in (0, 259, 258, 260, 261, 338, 339, 262, 360, 9):
                 self.completion_visible = False
                 # reset kill_line repeat for non-control keys
                 if code != 11:  # 11 = Ctrl+K
@@ -1743,7 +2421,10 @@ class Editor:
                 self.goto(stdscr)
             # ─── Special keys ──
             elif code == 9:  # Tab
-                self.indent()
+                if not self.completion_visible:
+                    self.indent()
+                else:
+                    self.accept_completion()
             elif code == 353:  # Shift+Tab (KEY_BTAB)
                 self.unindent()
             elif code in (curses.KEY_BACKSPACE, 8, 127):
@@ -1794,6 +2475,11 @@ class Editor:
             # ── Printable characters (including Unicode) ──
             elif isinstance(key, str) and code >= 32 and code != 127:
                 self.insert_char(key)
+                # Check if we should start auto-complete tracking
+                self._check_and_start_auto_complete()
+                # Update completion suggestions immediately for better UX
+                if self._pending_completion:
+                    self._update_completion_suggestions(stdscr)
 
 
 # ─── Plugin API methods (monkey-patched at runtime) ───
